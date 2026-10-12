@@ -69,6 +69,7 @@ footer.foot a{color:var(--muted)}
 @media print{
   header.top,nav,footer.foot,form#calc,.no-print,.btn{display:none!important}
   .print-only{display:block}
+  section.band,p.lede{display:none!important}
   body{background:#fff;color:#000;font-size:12px}
   .result{border:1px solid #000}
   .grid.calc{display:block}
