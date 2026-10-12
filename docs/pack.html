@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>2026 Return Pack for Nigerian dollar earners | Dollar Filer</title>
-<meta name="description" content="Excel worksheet, document checklist, LIRS and FCT-IRS filing steps and a record-keeping template for Nigerians paid in USD, GBP or EUR. Pre-order, delivered from 5 January 2027.">
+<meta name="description" content="Excel worksheet, document checklist, LIRS and FCT-IRS filing steps and a record-keeping template for Nigerians paid in USD, GBP or EUR. Sent by email as soon as you pay.">
 <link rel="canonical" href="https://vin-cc.github.io/dollar-filer/pack.html">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b6b45'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3E%E2%82%A6%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css">
@@ -16,7 +16,7 @@
 </div></header>
 <main class="wrap">
 <h1>The 2026 Return Pack: file your own return in one evening</h1>
-<p class="lede">For people living in Nigeria and paid from abroad: remote employees, Upwork and Fiverr freelancers, creators paid by YouTube or Patreon. <span class="price" data-price></span> one-off. Pre-order today, nothing is charged; files arrive from 5 January 2027, twelve weeks before the 31 March deadline.</p>
+<p class="lede">For people living in Nigeria and paid from abroad: remote employees, Upwork and Fiverr freelancers, creators paid by YouTube or Patreon. <span class="price" data-price></span> one-off, paid by card. The files arrive by email as soon as the payment goes through, and if the rules or state forms change before the 31 March 2027 deadline you get the update free.</p>
 
 <div class="cols">
 <div>
@@ -33,18 +33,22 @@
 </div>
 
 <div>
-  <h2 id="order">Pre-order</h2>
-  <form id="pre" class="result" novalidate>
-    <p style="margin-top:0"><strong>2026 Return Pack</strong> · <span class="price" data-price></span></p>
-    <label for="email">Email for the payment link and the files</label>
+  <h2 id="order">Buy the pack</h2>
+  <div class="result">
+    <p style="margin-top:0"><strong>2026 Return Pack (ZIP)</strong> · <span class="price" data-price></span></p>
+    <div id="buy"><p class="small">Loading the secure card form…</p></div>
+    <p class="small">Card payment by Stripe for READ FRANCE SAS (France), in US dollars. Your bank may add a foreign-transaction fee; naira cards with an FX limit may be declined, so a USD virtual or domiciliary card works best. Buyers in the European Union cannot use this checkout. Full refund within 14 days of delivery: reply to the delivery email.</p>
+  </div>
+  <form id="pre" class="result" novalidate style="margin-top:14px">
+    <p style="margin-top:0"><strong>Not ready to pay?</strong> Get one email in January 2027 with the deadline and a link to the pack.</p>
+    <label for="email">Email</label>
     <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com">
     <label for="pstate">State you file in</label>
     <select id="pstate" name="state"><option value="">Choose (optional)</option><option value="lagos">Lagos</option><option value="fct">FCT (Abuja)</option><option value="ogun">Ogun</option><option value="rivers">Rivers</option><option value="oyo">Oyo</option><option value="edo">Edo</option><option value="enugu">Enugu</option><option value="kano">Kano</option><option value="kaduna">Kaduna</option><option value="delta">Delta</option><option value="anambra">Anambra</option><option value="abroad">I live abroad</option></select>
-    <div class="check" id="addonbox" hidden><input id="addon" type="checkbox"><label for="addon" style="margin:0">Add "records and reminders" for $5 a month: we email you on the 5th to log last month's payments, and before each deadline.</label></div>
-    <div class="check"><input id="consent" type="checkbox" required><label for="consent" style="margin:0">Keep my email to send me the payment link and the pack. Nothing else; I can ask for deletion at octave@vread.fr (<a href="privacy.html">privacy</a>).</label></div>
+    <div class="check" id="addonbox" hidden><input id="addon" type="checkbox"><label for="addon" style="margin:0">I would pay $5 a month for "records and reminders": an email on the 5th to log last month's payments, and before each deadline.</label></div>
+    <div class="check"><input id="consent" type="checkbox" required><label for="consent" style="margin:0">Keep my email for this reminder. Nothing else; I can ask for deletion at octave@vread.fr (<a href="privacy.html">privacy</a>).</label></div>
     <div class="hp" aria-hidden="true"><label for="website">Leave empty</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
-    <p><button class="btn" type="submit" id="prebtn">Pre-order for <span data-price></span>, pay nothing today</button></p>
-    <p class="small">How this works: card payment is not open yet. In January 2027 we email a secure payment link; you pay only if you still want the pack. No reply, no charge.</p>
+    <p><button class="btn ghost" type="submit" id="prebtn">Email me the reminder</button></p>
     <p class="msg" id="premsg" role="status"></p>
   </form>
 </div>
@@ -60,6 +64,18 @@
   <p>Estimates and general information, not tax advice. <a href="how-we-calculate.html">Sources and known gaps</a> · <a href="privacy.html">Privacy (NDPA)</a> · <a href="terms.html">Terms</a></p>
 </div></footer>
 <script src="assets/t.js"></script>
+<script src="assets/og-checkout.js"></script>
+<script>
+(function(){
+  var p=window.dfPrice===29?29:19, buy=document.getElementById('buy'), started=false;
+  buy.addEventListener('submit',function(){if(!started){started=true;window.dfTrack&&window.dfTrack('checkout_start');}},true);
+  try{
+    OctaveCheckout.mount('#buy',{product:'dollar-filer-pack-'+p+'-usd',amount:p*100,currency:'usd',venture:'af-ng-02',lang:'en',country:'NG',
+      onSuccess:function(){window.dfTrack&&window.dfTrack('paid');}});
+    window.dfTrack&&window.dfTrack('checkout_view');
+  }catch(e){buy.innerHTML='<p class="msg err">The card form could not load. Email octave@vread.fr and we will send a payment link.</p>';}
+})();
+</script>
 <script>
 (function(){
   var E='https://script.google.com/macros/s/AKfycbwuvwAEQ_dTI61JJtVUpUUJHFAvp6On3QaF_lS06sO52LZzzfJiSEyt40lVuwABf2FJ/exec';
@@ -75,7 +91,7 @@
     var q=new URLSearchParams(location.search);
     var body={action:'preorder',email:email,variant:window.dfVariant,addon_shown:!!window.dfAddon,addon:!!(window.dfAddon&&document.getElementById('addon').checked),state:f.state.value,consent:true,hp:f.website.value,page:location.pathname,utm_source:q.get('utm_source')||''};
     fetch(E,{method:'POST',headers:{'content-type':'text/plain'},body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(j){
-      if(j&&j.ok){m.textContent='Done. You are on the list for the 2026 Return Pack at $'+window.dfPrice+'. Expect our email in early January 2027.';f.reset();}
+      if(j&&j.ok){m.textContent='Done. You are on the list. Expect one email in early January 2027.';f.reset();}
       else{m.className='msg err';m.textContent=j&&j.error==='bad_email'?'Check the email address.':'That did not go through. Try again, or email octave@vread.fr.';}
     }).catch(function(){m.className='msg err';m.textContent='Network problem. Try again, or email octave@vread.fr.';}).then(function(){btn.disabled=false;});
   });

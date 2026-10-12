@@ -68,26 +68,65 @@ test('file guide answers and no horizontal scroll', async ({ page }, info) => {
   await page.screenshot({ path: `shots/live-${info.project.name}-file.png`, fullPage: true });
 });
 
-test('tracking counters increment, pre-order posts', async ({ page, request }, info) => {
+test('tracking counters increment, reminder form posts', async ({ page, request }, info) => {
   test.skip(!KEY, 'STATS_KEY not set');
   const tag = `e2e-${info.project.name}-${Date.now()}`;
   const before = await stats(request);
-  const preBefore = before.preorders;
   await page.goto(`pack.html?utm_source=${tag}&v=p29a`);
-  await expect(page.locator('#prebtn')).toContainText('$29');
+  await expect(page.locator('#buy')).toContainText('Pay $29.00', { timeout: 30000 });
   await expect(page.locator('#addonbox')).toBeVisible();
   await page.fill('#email', `e2e-test+${info.project.name}@example.com`);
   await page.check('#addon'); await page.check('#consent');
   await page.click('#prebtn');
   await expect(page.locator('#premsg')).toContainText('You are on the list', { timeout: 30000 });
-  await page.screenshot({ path: `shots/live-${info.project.name}-preorder.png`, fullPage: true });
+  await page.screenshot({ path: `shots/live-${info.project.name}-pack.png`, fullPage: true });
   await page.goto(`./?utm_source=${tag}`);
   await page.fill('#fs', '1000');
   await expect(page.locator('#r_tax')).toBeVisible();
   await page.waitForTimeout(4000);
   const after = await stats(request);
-  expect(after.preorders).toBeGreaterThan(preBefore);
+  expect(after.preorders).toBeGreaterThan(before.preorders);
   expect(count(after, r => r.source === tag && r.event === 'view')).toBeGreaterThanOrEqual(2);
   expect(count(after, r => r.source === tag && r.event === 'calc_done')).toBeGreaterThanOrEqual(1);
-  expect(count(after, r => r.source === tag && r.event === 'preorder_open' && r.variant === 'p29a')).toBeGreaterThanOrEqual(1);
+  expect(count(after, r => r.source === tag && r.event === 'checkout_view' && r.variant === 'p29a')).toBeGreaterThanOrEqual(1);
+  expect(count(after, r => r.source === tag && r.event === 'preorder_open')).toBeGreaterThanOrEqual(1);
+});
+
+// Live card checkout up to PaymentIntent creation. Confirmation is blocked at the network level (and the
+// card number is Stripe's test card, which a live account declines anyway); the PI is then cancelled through
+// the shared checkout's cancelIntent action. The client secret is never printed.
+test('live checkout creates a USD PaymentIntent, never confirmed, then cancelled', async ({ page, context }, info) => {
+  test.skip(info.project.name !== 'desktop-1440' && !process.env.PI_BOTH, 'one live PI per run');
+  const confirms = [];
+  await context.route(/api\.stripe\.com\/v1\/payment_intents\/[^/]+\/confirm/, (r) => { confirms.push(r.request().url().split('?')[0].replace(/_secret_[^/]+/, '')); return r.abort(); });
+  let created = null;
+  page.on('response', async (res) => {
+    if (!/script\.(google|googleusercontent)\.com/.test(res.url())) return;
+    try { const j = await res.json(); if (j && j.payment_intent && j.client_secret) created = j; } catch {}
+  });
+  const price = 19;
+  await page.goto(`pack.html?v=p${price}`);
+  const buy = page.locator('#buy');
+  await expect(buy).toContainText(`Pay $${price}.00`, { timeout: 30000 });
+  await buy.locator('input[type=email]').first().fill('e2e-test+checkout@example.com');
+  await buy.locator('input[autocomplete=name], input[name=name]').first().fill('E2E Test Octave');
+  const frame = page.frameLocator('#buy iframe[title*="payment" i], #buy iframe[name^="__privateStripeFrame"]').first();
+  await frame.locator('input[name=number]').fill('4242424242424242');
+  await frame.locator('input[name=expiry]').fill('12 / 34');
+  await frame.locator('input[name=cvc]').fill('123');
+  const country = frame.locator('select[name=country]');
+  if (await country.count()) await country.selectOption('NG').catch(() => {});
+  await buy.locator('button', { hasText: 'Pay' }).click();
+  await expect.poll(() => created && created.payment_intent, { timeout: 45000 }).toMatch(/^pi_/);
+  const pi = created.payment_intent;
+  console.log('PI created:', pi);
+  await page.waitForTimeout(3000);
+  const cancel = await page.evaluate(async ({ api, pi, cs }) => {
+    const r = await fetch(api, { method: 'POST', headers: { 'content-type': 'text/plain' }, body: JSON.stringify({ action: 'cancelIntent', payment_intent: pi, client_secret: cs }) });
+    return r.json();
+  }, { api: 'https://script.google.com/macros/s/AKfycbzHtgYXyyylvj1LFG16HuhxwFHkB7E2u-QKIlVH4hEJggjUvq_rcTK_MEodCwjTbATbuw/exec', pi, cs: created.client_secret });
+  console.log('cancel:', JSON.stringify(cancel), 'confirm attempts blocked:', confirms.length);
+  expect(cancel.ok).toBe(true);
+  expect(cancel.status).toBe('canceled');
+  await page.screenshot({ path: `shots/live-${info.project.name}-checkout.png`, fullPage: true });
 });
