@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en-NG">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nigeria tax calculator for dollar earners, 2026 | Dollar Filer</title>
+<meta name="description" content="Paid in USD, GBP or EUR and living in Nigeria? Estimate your 2026 income tax under the Nigeria Tax Act 2025: bands, rent relief, CBN rate, foreign tax credit. Free, no sign-up.">
+<link rel="canonical" href="https://vin-cc.github.io/dollar-filer/">
+<meta property="og:title" content="Paid in dollars, living in Nigeria? Estimate your 2026 tax">
+<meta property="og:description" content="Free estimator built on the Nigeria Tax Act 2025 text, with the CBN official rate and section numbers on every line.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vin-cc.github.io/dollar-filer/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b6b45'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3E%E2%82%A6%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Dollar Filer tax estimator","applicationCategory":"FinanceApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"READ FRANCE SAS","email":"octave@vread.fr"}}</script>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./">Dollar<b>Filer</b></a>
+  <nav class="top"><a href="./" aria-current="page">Calculator</a><a href="file.html">Do I need to file?</a><a href="pack.html">Filing pack</a><a href="how-we-calculate.html">Sources</a></nav>
+</div></header>
+
+<main class="wrap">
+<h1>Paid in dollars, living in Nigeria? Estimate your 2026 income tax.</h1>
+<p class="lede">Built on the Nigeria Tax Act 2025, in force since 1 January 2026: 0% on the first ₦800,000, then 15% up to 25%. We convert with the Central Bank of Nigeria's published rate and show the section of the Act behind each line. Free, no sign-up, and nothing you type leaves your phone.</p>
+
+<div class="grid calc">
+<form id="calc" novalidate autocomplete="off">
+  <fieldset>
+    <legend>1. Where you live</legend>
+    <label for="state">State you lived in on 1 January 2026</label>
+    <select id="state" name="state"></select>
+    <span class="hint">Your state's internal revenue service collects your tax, not the NRS (Twelfth Schedule NTA 2025; NTAA s.3).</span>
+    <label for="resident">Were you a Nigerian tax resident in 2026?</label>
+    <select id="resident" name="resident">
+      <option value="yes">Yes: I live in Nigeria (183+ days, or my home is here)</option>
+      <option value="unsure">Not sure</option>
+      <option value="no">No: I live abroad and only send money home</option>
+    </select>
+  </fieldset>
+
+  <fieldset>
+    <legend>2. Income from abroad in 2026</legend>
+    <label for="fs">Salary from a foreign employer (Deel, Remote, direct payroll)</label>
+    <div class="row3"><input id="fs" name="fs" type="text" inputmode="decimal" placeholder="0"><select id="fs_cur" aria-label="Currency of salary"><option>USD</option><option>GBP</option><option>EUR</option></select><select id="fs_per" aria-label="Period of salary"><option value="12">a month</option><option value="1">a year</option></select></div>
+    <label for="ff">Freelance or contract fees (Upwork, Fiverr, direct clients)</label>
+    <div class="row3"><input id="ff" name="ff" type="text" inputmode="decimal" placeholder="0"><select id="ff_cur" aria-label="Currency of fees"><option>USD</option><option>GBP</option><option>EUR</option></select><select id="ff_per" aria-label="Period of fees"><option value="1">a year</option><option value="12">a month</option></select></div>
+    <label for="fe">Business costs on that freelance work</label>
+    <div class="row3"><input id="fe" name="fe" type="text" inputmode="decimal" placeholder="0"><select id="fe_cur" aria-label="Currency of costs"><option>USD</option><option>GBP</option><option>EUR</option></select><select id="fe_per" aria-label="Period of costs"><option value="1">a year</option><option value="12">a month</option></select></div>
+    <span class="hint">Platform fees, software, internet data, a share of power costs: only what you spent wholly and exclusively to earn the fees (s.20). Personal spending does not count (s.21).</span>
+    <label for="fp">Foreign dividends, interest, rent or royalties</label>
+    <div class="row3"><input id="fp" name="fp" type="text" inputmode="decimal" placeholder="0"><select id="fp_cur" aria-label="Currency of investment income"><option>USD</option><option>GBP</option><option>EUR</option></select><select id="fp_per" aria-label="Period"><option value="1">a year</option><option value="12">a month</option></select></div>
+    <div class="check"><input id="fp_ok" type="checkbox"><label for="fp_ok" style="margin:0">I brought this investment income into Nigeria through approved channels (bank or domiciliary account). It is then exempt (s.163(1)(s)).</label></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>3. Exchange rate (naira per unit)</legend>
+    <div class="radios" role="radiogroup" aria-label="Which CBN rate">
+      <label><input type="radio" name="fxmode" value="ytd" checked> CBN average for 2026 so far <span class="cite" id="fx_ytd_note"></span></label>
+      <label><input type="radio" name="fxmode" value="latest"> CBN rate on the latest published day <span class="cite" id="fx_latest_note"></span></label>
+      <label><input type="radio" name="fxmode" value="own"> My own rates (e.g. the CBN rate on each payday)</label>
+    </div>
+    <div class="fx">
+      <div><label for="fx_USD">₦ per USD</label><input id="fx_USD" type="text" inputmode="decimal"></div>
+      <div><label for="fx_GBP">₦ per GBP</label><input id="fx_GBP" type="text" inputmode="decimal"></div>
+      <div><label for="fx_EUR">₦ per EUR</label><input id="fx_EUR" type="text" inputmode="decimal"></div>
+    </div>
+    <details><summary>Where these rates come from</summary>
+      <p class="small">The figures are the "central rate" the Central Bank of Nigeria publishes every working day on its <a href="https://www.cbn.gov.ng/rates/ExchRateByCurrency.html" rel="noopener">exchange rates page</a>. A script copies them once a day; <span id="fx_src_date">the date of the last copy is shown here once loaded</span>. For USD the central rate sits within ₦1 of the NFEM rate that CBN calls "the official exchange rate for the day".</p>
+      <p class="small">The Act says foreign-currency expenses are converted "at the official exchange rate published by the Central Bank of Nigeria for the relevant date or period" (s.20(4)). It has no line as clear for income, so the safest record is the CBN rate on each day you were paid. The year average is a shortcut for planning. The rate your bank or Grey gave you is not the official rate.</p>
+    </details>
+  </fieldset>
+
+  <fieldset>
+    <legend>4. Naira income</legend>
+    <label for="ls">Salary from a Nigerian employer, before PAYE (₦ a year)</label>
+    <input id="ls" type="text" inputmode="decimal" placeholder="0">
+    <label for="lb">Profit from a business in Nigeria (₦ a year)</label>
+    <input id="lb" type="text" inputmode="decimal" placeholder="0">
+    <label for="lo">Other income: rent, interest (₦ a year)</label>
+    <input id="lo" type="text" inputmode="decimal" placeholder="0">
+  </fieldset>
+
+  <fieldset>
+    <legend>5. Reliefs you paid for in 2026 (₦ a year)</legend>
+    <label for="rent">Rent paid on your home</label>
+    <input id="rent" type="text" inputmode="decimal" placeholder="0">
+    <span class="hint">20% of rent comes off, up to ₦500,000. Keep the receipt and tenancy agreement (s.30(2)(a)(vi)).</span>
+    <label for="pen">Pension contributions to a PFA</label>
+    <input id="pen" type="text" inputmode="decimal" placeholder="0">
+    <label for="nhf">National Housing Fund</label>
+    <input id="nhf" type="text" inputmode="decimal" placeholder="0">
+    <label for="nhis">Health insurance under the national scheme</label>
+    <input id="nhis" type="text" inputmode="decimal" placeholder="0">
+    <label for="mort">Interest on a loan to build or buy the house you live in</label>
+    <input id="mort" type="text" inputmode="decimal" placeholder="0">
+    <label for="life">Life insurance or annuity premiums</label>
+    <input id="life" type="text" inputmode="decimal" placeholder="0">
+  </fieldset>
+
+  <fieldset>
+    <legend>6. Tax already paid</legend>
+    <label for="paye">PAYE or withholding tax already taken in Nigeria (₦)</label>
+    <input id="paye" type="text" inputmode="decimal" placeholder="0">
+    <label for="ftax">Tax paid abroad on the foreign income above</label>
+    <div class="row"><input id="ftax" type="text" inputmode="decimal" placeholder="0"><select id="ftax_cur" aria-label="Currency of foreign tax"><option>USD</option><option>GBP</option><option>EUR</option></select></div>
+    <span class="hint">Only tax actually charged by the other country. Nigeria gives credit up to its own tax on that income (s.120).</span>
+  </fieldset>
+  <button class="btn" type="submit">Calculate my 2026 tax</button>
+</form>
+
+<div class="sticky">
+  <div class="result" id="result" aria-live="polite">
+    <p class="print-only"><strong>Dollar Filer: 2026 tax estimate</strong> · printed <span id="printed"></span> · rules v<span class="rv"></span></p>
+    <div id="out"><p class="small">Type an amount on the left. The estimate updates as you type.</p></div>
+  </div>
+  <p class="small no-print">This is an estimate and a guide, not tax advice. We are not a tax agent and we do not file for you. Where the law is unclear we say so in the result.</p>
+</div>
+</div>
+
+<section class="band">
+  <h2>What this calculator does not cover</h2>
+  <ul class="list">
+    <li>Capital gains, including crypto disposals (the Act taxes them, s.4(1)(j) and Part VIII; we left them out of version 2026.1).</li>
+    <li>Companies, partnerships and the small-company 0% rate. This is for individuals only.</li>
+    <li>Presumptive tax for people without records (s.29): the rules come from regulations not yet in our hands.</li>
+    <li>Non-residents. If you live abroad, money you send home is not taxed just for arriving in Nigeria (s.4; PFPTRC "Fact not fear #2").</li>
+  </ul>
+</section>
+
+<section class="band cols">
+  <div>
+    <h2>Do you need to file a return?</h2>
+    <p>If you lived in Nigeria in 2026 and earned income, the answer is almost always yes, even when the tax comes to zero: "every taxable person whether or not liable to pay tax" files (NTAA s.13(1)). Our reading of the deadline for 2026 income is 31 March 2027.</p>
+    <p><a href="file.html">Check in five questions, with the list of documents</a></p>
+  </div>
+  <div>
+    <h2>2026 Return Pack (pre-order)</h2>
+    <p>The worksheet behind this calculator as an Excel file, a document checklist, step-by-step screens for LIRS eTax and the FCT-IRS portal, and a record-keeping template for every dollar payment. Delivered from 5 January 2027, in time for the March deadline.</p>
+    <p><span class="price" data-price></span> <span class="small">one-off, pre-order now, nothing charged today</span></p>
+    <p><a class="btn ghost" href="pack.html" data-track="preorder_open">See what is in the pack</a> <a href="sample/dollar-filer-document-checklist.pdf" data-track="sample_download">Free sample: document checklist (PDF)</a></p>
+  </div>
+</section>
+</main>
+
+<footer class="foot"><div class="wrap">
+  <p><strong>Dollar Filer</strong> is published by READ FRANCE SAS, Paris (SIREN 988 741 773), and run with Octave, an AI agent. Contact: <a href="mailto:octave@vread.fr">octave@vread.fr</a>. Not affiliated with the Nigeria Revenue Service, the Joint Revenue Board, CBN or any State Internal Revenue Service.</p>
+  <p>Estimates and general information, not tax advice. Rules version <span class="rv"></span>, checked against the gazetted Nigeria Tax Act 2025 and Nigeria Tax Administration Act 2025 on 13 October 2026. <a href="how-we-calculate.html">Sources and known gaps</a> · <a href="privacy.html">Privacy (NDPA)</a> · <a href="terms.html">Terms</a></p>
+</div></footer>
+<script src="assets/calc.js"></script>
+<script src="assets/t.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

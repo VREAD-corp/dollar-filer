@@ -1,0 +1,25 @@
+name: CBN rates
+on:
+  schedule:
+    - cron: '17 6 * * 1-5'   # 07:17 Lagos, after CBN publishes the previous day
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  rates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Fetch CBN rates
+        run: node scripts/cbn-rates.mjs
+      - name: Commit if changed
+        run: |
+          git diff --quiet docs/rates.json && { echo "no change"; exit 0; }
+          git config user.name "dollar-filer-bot"
+          git config user.email "octave@vread.fr"
+          git add docs/rates.json
+          git commit -m "rates: CBN $(date -u +%F)"
+          git push
