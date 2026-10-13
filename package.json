@@ -2,7 +2,7 @@
   "name": "dollar-filer",
   "private": true,
   "scripts": {
-    "test:unit": "node --test tests/calc.test.mjs",
+    "test:unit": "node --test tests/calc.test.mjs tests/t.test.mjs",
     "test:e2e": "playwright test",
     "rates": "node scripts/cbn-rates.mjs"
   },

@@ -11,6 +11,9 @@ async function stats(request) {
   return r.json();
 }
 const count = (s, f) => s.rows.filter(f).reduce((n, r) => n + r.count, 0);
+// Our runs never count as visits: octave_notrack=1 sends every hit to the Exclus tab (reason notrack).
+const ex = (s, f) => (s.excluded || []).filter((r) => r.reason === 'notrack' && f(r)).reduce((n, r) => n + r.count, 0);
+test.beforeEach(async ({ page }) => { await page.addInitScript(() => { try { localStorage.setItem('octave_notrack', '1'); } catch {} }); });
 
 test('case A: $3,000/month salary, rent 2.4m, Lagos', async ({ page }, info) => {
   await page.goto('./');
@@ -68,7 +71,7 @@ test('file guide answers and no horizontal scroll', async ({ page }, info) => {
   await page.screenshot({ path: `shots/live-${info.project.name}-file.png`, fullPage: true });
 });
 
-test('tracking counters increment, reminder form posts', async ({ page, request }, info) => {
+test('tracking counters increment (as excluded test hits), reminder form posts', async ({ page, request }, info) => {
   test.skip(!KEY, 'STATS_KEY not set');
   const tag = `e2e-${info.project.name}-${Date.now()}`;
   const before = await stats(request);
@@ -88,10 +91,12 @@ test('tracking counters increment, reminder form posts', async ({ page, request 
   await page.waitForTimeout(4000);
   const after = await stats(request);
   expect(after.preorders).toBeGreaterThan(before.preorders);
-  expect(count(after, r => r.source === tag && r.event === 'view')).toBeGreaterThanOrEqual(2);
-  expect(count(after, r => r.source === tag && r.event === 'calc_done')).toBeGreaterThanOrEqual(1);
-  expect(count(after, r => r.source === tag && r.event === 'checkout_view' && r.variant === 'p29a')).toBeGreaterThanOrEqual(1);
-  expect(count(after, r => r.source === tag && r.event === 'preorder_open')).toBeGreaterThanOrEqual(1);
+  const delta = (f) => ex(after, f) - ex(before, f);
+  expect(delta(r => r.event === 'view')).toBeGreaterThanOrEqual(2);
+  expect(delta(r => r.event === 'calc_done')).toBeGreaterThanOrEqual(1);
+  expect(delta(r => r.event === 'checkout_view' && r.variant === 'p29a')).toBeGreaterThanOrEqual(1);
+  expect(delta(r => r.event === 'preorder_open')).toBeGreaterThanOrEqual(1);
+  expect(count(after, r => r.source === tag), 'test hits must not count as visits').toBe(0);
 });
 
 // Live card checkout up to PaymentIntent creation. Confirmation is blocked at the network level (and the
