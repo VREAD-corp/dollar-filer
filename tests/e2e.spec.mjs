@@ -52,6 +52,25 @@ test('case D: $50,000 salary with $5,000 foreign tax (s.120 credit)', async ({ p
   await expect(page.locator('#r_tax')).toHaveText('₦8,430,000');
 });
 
+test('cro.js loads before t.js; ?v= forces the price variant, prices and add-on follow it', async ({ page, request }) => {
+  const js = await request.get('assets/cro.js');
+  expect(js.ok()).toBe(true);
+  await page.goto('pack.html?octave_notrack=1&v=p29a');
+  await expect(page.locator('script[src$="assets/cro.js"][data-site="dollar-filer"]')).toHaveCount(1);
+  expect(await page.evaluate(() => [window.octaveCro && octaveCro.v('price'), window.dfVariant, window.dfPrice, window.dfAddon,
+    document.documentElement.dataset.xpPrice, sessionStorage.getItem('oxp_price'), localStorage.getItem('df_v')])).toEqual(['p29a', 'p29a', 29, true, 'p29a', 'p29a', null]);
+  await expect(page.locator('[data-price]').first()).toHaveText('$29');
+  await expect(page.locator('#addonbox')).toBeVisible();
+  // Exact value first: ?v=p19 is p19 (no add-on), not p19a. Same tab, next page without ?v=: kept.
+  await page.goto('pack.html?octave_notrack=1&v=p19');
+  expect(await page.evaluate(() => [octaveCro.v('price'), window.dfPrice, window.dfAddon])).toEqual(['p19', 19, false]);
+  await expect(page.locator('[data-price]').first()).toHaveText('$19');
+  await expect(page.locator('#addonbox')).toBeHidden();
+  await page.goto('./?octave_notrack=1');
+  await expect(page.locator('#pricing [data-price]')).toHaveText('$19');
+  expect(await page.evaluate(() => window.dfVariant)).toBe('p19');
+});
+
 test('CBN rates load from rates.json', async ({ page, request }) => {
   const j = await (await request.get('rates.json')).json();
   await page.goto('./');

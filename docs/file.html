@@ -18,7 +18,7 @@
 <h1>Do I need to file a Nigerian tax return for 2026?</h1>
 <p class="lede">Short answer for most remote workers living in Nigeria: yes. The Nigeria Tax Administration Act 2025 asks "every taxable person whether or not liable to pay tax" to file a return each year without waiting for a demand (s.13(1)), and an employee whose employer runs PAYE still files an annual return of income from all sources (s.14(3)). Answer five questions to see where you stand.</p>
 
-<form id="quiz" class="result" novalidate>
+<form id="quiz" class="result" novalidate data-section="quiz">
   <fieldset><legend>1. In 2026, did you live in Nigeria?</legend>
     <div class="radios"><label><input type="radio" name="q1" value="yes"> Yes, most of the year, or I keep my home here</label><label><input type="radio" name="q1" value="no"> No, I live abroad and visit</label><label><input type="radio" name="q1" value="unsure"> Partly / not sure</label></div></fieldset>
   <fieldset><legend>2. Did you earn any income in 2026?</legend>
@@ -39,7 +39,7 @@
   <p>If you live abroad and only send money home, that money is not taxed for arriving in Nigeria: non-residents are taxed on income from Nigeria (s.4, s.17), a point the Presidential Fiscal Policy and Tax Reforms Committee repeated in its "Fact not fear #2" notice (December 2025).</p>
 </section>
 
-<section class="band">
+<section class="band" id="where">
   <h2>Where you file</h2>
   <p>Your state, not the federal NRS. State and FCT tax authorities administer tax for resident individuals (NTAA s.3(2)). For someone working in Nigeria for a foreign employer, the Act places you in the state where you live (Twelfth Schedule, para. 1(b)); for freelance and other earned income, the state where you had your place of residence on 1 January (para. 6).</p>
   <ul class="list">
@@ -61,7 +61,7 @@
   <p class="small">Extensions happen but come late: FCT-IRS moved the 2026 deadline to 30 April 2026 only on 31 March 2026. Do not plan around one.</p>
 </section>
 
-<section class="band">
+<section class="band" id="documents">
   <h2>Documents to gather</h2>
   <div class="cols">
   <ul class="list">
@@ -82,7 +82,7 @@
   <p><a href="sample/dollar-filer-document-checklist.pdf" data-track="sample_download">Download the printable checklist (free PDF)</a></p>
 </section>
 
-<section class="band">
+<section class="band" id="penalties">
   <h2>What it costs to ignore this</h2>
   <ul class="list">
     <li>Not filing: ₦100,000 for the first month and ₦50,000 for each month the failure continues (NTAA s.101).</li>
@@ -97,7 +97,9 @@
   <p><strong>Dollar Filer</strong> is published by READ FRANCE SAS, Paris (SIREN 988 741 773), and run with Octave, an AI agent. Contact: <a href="mailto:octave@vread.fr">octave@vread.fr</a>. Not affiliated with the Nigeria Revenue Service, the Joint Revenue Board, CBN or any State Internal Revenue Service.</p>
   <p>General information checked on 13 October 2026, not tax advice. <a href="how-we-calculate.html">Sources and known gaps</a> · <a href="privacy.html">Privacy (NDPA)</a> · <a href="terms.html">Terms</a></p>
 </div></footer>
-<script src="assets/t.js?v=2"></script>
+<script src="assets/xp.js"></script>
+<script src="assets/cro.js" data-site="dollar-filer" data-api="https://script.google.com/macros/s/AKfycbwuvwAEQ_dTI61JJtVUpUUJHFAvp6On3QaF_lS06sO52LZzzfJiSEyt40lVuwABf2FJ/exec" data-hosts="vin-cc.github.io" data-cta=".btn,[data-track],#buy button"></script>
+<script src="assets/t.js?v=3"></script>
 <script>
 (function(){
   var f=document.getElementById('quiz'),a=document.getElementById('answer'),sent=false;

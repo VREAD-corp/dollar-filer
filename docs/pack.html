@@ -19,7 +19,7 @@
 <p class="lede">For people living in Nigeria and paid from abroad: remote employees, Upwork and Fiverr freelancers, creators paid by YouTube or Patreon. <span class="price" data-price></span> one-off, paid by card. The files arrive by email as soon as the payment goes through, and if the rules or state forms change before the 31 March 2027 deadline you get the update free.</p>
 
 <div class="cols">
-<div>
+<div data-section="contents">
   <h2>What you get</h2>
   <table class="files">
     <tr><th>File</th><th>What it does</th></tr>
@@ -32,7 +32,7 @@
   <p>It is not tax advice and we do not file for you. We are a foreign publisher (READ FRANCE SAS, Paris), not a Nigerian tax agent; only you or an agent accredited by your state can file your return (NTAA s.33). If your affairs include companies, property sales or crypto trading, see a chartered accountant.</p>
 </div>
 
-<div>
+<div data-section="pricing">
   <h2 id="order">Buy the pack</h2>
   <div class="result">
     <p style="margin-top:0"><strong>2026 Return Pack (ZIP)</strong> · <span class="price" data-price></span></p>
@@ -54,7 +54,7 @@
 </div>
 </div>
 
-<section class="band">
+<section class="band" id="about">
   <h2>Who is behind this</h2>
   <p>Dollar Filer is published by READ FRANCE SAS, a company registered in Paris (SIREN 988 741 773). The calculator, worksheet and guides were prepared by Octave, an AI agent working for READ FRANCE, from the gazetted Nigeria Tax Act 2025 and Nigeria Tax Administration Act 2025, the CBN exchange-rate feed, and the pages LIRS and FCT-IRS publish. No chartered accountant has reviewed them yet; if one does, we will name them here. <a href="how-we-calculate.html">Read the sources and the known gaps.</a></p>
 </section>
@@ -63,15 +63,17 @@
   <p><strong>Dollar Filer</strong> is published by READ FRANCE SAS, Paris (SIREN 988 741 773), and run with Octave, an AI agent. Contact: <a href="mailto:octave@vread.fr">octave@vread.fr</a>. Not affiliated with the Nigeria Revenue Service, the Joint Revenue Board, CBN or any State Internal Revenue Service.</p>
   <p>Estimates and general information, not tax advice. <a href="how-we-calculate.html">Sources and known gaps</a> · <a href="privacy.html">Privacy (NDPA)</a> · <a href="terms.html">Terms</a></p>
 </div></footer>
-<script src="assets/t.js?v=2"></script>
+<script src="assets/xp.js"></script>
+<script src="assets/cro.js" data-site="dollar-filer" data-api="https://script.google.com/macros/s/AKfycbwuvwAEQ_dTI61JJtVUpUUJHFAvp6On3QaF_lS06sO52LZzzfJiSEyt40lVuwABf2FJ/exec" data-hosts="vin-cc.github.io" data-cta=".btn,[data-track],#buy button"></script>
+<script src="assets/t.js?v=3"></script>
 <script src="assets/og-checkout.js?v=1.2.0"></script>
 <script>
 (function(){
   var p=window.dfPrice===29?29:19, buy=document.getElementById('buy'), started=false;
-  buy.addEventListener('submit',function(){if(!started){started=true;window.dfTrack&&window.dfTrack('checkout_start');}},true);
+  buy.addEventListener('submit',function(){if(!started){started=true;window.dfTrack&&window.dfTrack('checkout_start');window.octaveCro&&octaveCro.goal('checkout');}},true);
   try{
     OctaveCheckout.mount('#buy',{product:'dollar-filer-pack-'+p+'-usd',amount:p*100,currency:'usd',venture:'af-ng-02',lang:'en',country:'NG',
-      onSuccess:function(){window.dfTrack&&window.dfTrack('paid');}});
+      onSuccess:function(){window.dfTrack&&window.dfTrack('paid');window.octaveCro&&octaveCro.goal('paid');}});
     window.dfTrack&&window.dfTrack('checkout_view');
   }catch(e){buy.innerHTML='<p class="msg err">The card form could not load. Email octave@vread.fr and we will send a payment link.</p>';}
 })();
@@ -91,7 +93,7 @@
     var q=new URLSearchParams(location.search);
     var body={action:'preorder',email:email,variant:window.dfVariant,addon_shown:!!window.dfAddon,addon:!!(window.dfAddon&&document.getElementById('addon').checked),state:f.state.value,consent:true,hp:f.website.value,page:location.pathname,utm_source:q.get('utm_source')||''};
     fetch(E,{method:'POST',headers:{'content-type':'text/plain'},body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(j){
-      if(j&&j.ok){m.textContent='Done. You are on the list. Expect one email in early January 2027.';f.reset();}
+      if(j&&j.ok){m.textContent='Done. You are on the list. Expect one email in early January 2027.';window.octaveCro&&octaveCro.goal('waitlist');f.reset();}
       else{m.className='msg err';m.textContent=j&&j.error==='bad_email'?'Check the email address.':'That did not go through. Try again, or email octave@vread.fr.';}
     }).catch(function(){m.className='msg err';m.textContent='Network problem. Try again, or email octave@vread.fr.';}).then(function(){btn.disabled=false;});
   });

@@ -24,7 +24,7 @@
 <h1>Paid in dollars, living in Nigeria? Estimate your 2026 income tax.</h1>
 <p class="lede">Built on the Nigeria Tax Act 2025, in force since 1 January 2026: 0% on the first ₦800,000, then 15% up to 25%. We convert with the Central Bank of Nigeria's published rate and show the section of the Act behind each line. Free, no sign-up, and nothing you type leaves your phone.</p>
 
-<div class="grid calc">
+<div class="grid calc" data-section="calculator">
 <form id="calc" novalidate autocomplete="off">
   <fieldset>
     <legend>1. Where you live</legend>
@@ -65,7 +65,7 @@
       <div><label for="fx_GBP">₦ per GBP</label><input id="fx_GBP" type="text" inputmode="decimal"></div>
       <div><label for="fx_EUR">₦ per EUR</label><input id="fx_EUR" type="text" inputmode="decimal"></div>
     </div>
-    <details><summary>Where these rates come from</summary>
+    <details id="rates-source"><summary>Where these rates come from</summary>
       <p class="small">The figures are the "central rate" the Central Bank of Nigeria publishes every working day on its <a href="https://www.cbn.gov.ng/rates/ExchRateByCurrency.html" rel="noopener">exchange rates page</a>. A script copies them once a day; <span id="fx_src_date">the date of the last copy is shown here once loaded</span>. For USD the central rate sits within ₦1 of the NFEM rate that CBN calls "the official exchange rate for the day".</p>
       <p class="small">The Act says foreign-currency expenses are converted "at the official exchange rate published by the Central Bank of Nigeria for the relevant date or period" (s.20(4)). It has no line as clear for income, so the safest record is the CBN rate on each day you were paid. The year average is a shortcut for planning. The rate your bank or Grey gave you is not the official rate.</p>
     </details>
@@ -118,7 +118,7 @@
 </div>
 </div>
 
-<section class="band">
+<section class="band" id="limits">
   <h2>What this calculator does not cover</h2>
   <ul class="list">
     <li>Capital gains, including crypto disposals (the Act taxes them, s.4(1)(j) and Part VIII; we left them out of version 2026.1).</li>
@@ -128,7 +128,7 @@
   </ul>
 </section>
 
-<section class="band cols">
+<section class="band cols" id="pricing">
   <div>
     <h2>Do you need to file a return?</h2>
     <p>If you lived in Nigeria in 2026 and earned income, the answer is almost always yes, even when the tax comes to zero: "every taxable person whether or not liable to pay tax" files (NTAA s.13(1)). Our reading of the deadline for 2026 income is 31 March 2027.</p>
@@ -148,7 +148,9 @@
   <p>Estimates and general information, not tax advice. Rules version <span class="rv"></span>, checked against the gazetted Nigeria Tax Act 2025 and Nigeria Tax Administration Act 2025 on 13 October 2026. <a href="how-we-calculate.html">Sources and known gaps</a> · <a href="privacy.html">Privacy (NDPA)</a> · <a href="terms.html">Terms</a></p>
 </div></footer>
 <script src="assets/calc.js"></script>
-<script src="assets/t.js?v=2"></script>
+<script src="assets/xp.js"></script>
+<script src="assets/cro.js" data-site="dollar-filer" data-api="https://script.google.com/macros/s/AKfycbwuvwAEQ_dTI61JJtVUpUUJHFAvp6On3QaF_lS06sO52LZzzfJiSEyt40lVuwABf2FJ/exec" data-hosts="vin-cc.github.io" data-cta=".btn,[data-track],#buy button"></script>
+<script src="assets/t.js?v=3"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>

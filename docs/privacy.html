@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Privacy notice (NDPA) | Dollar Filer</title>
-<meta name="description" content="How Dollar Filer handles data: calculator inputs never leave your browser, cookieless counters, purchases and reminder emails, your rights under the NDPA 2023.">
+<meta name="description" content="How Dollar Filer handles data: calculator inputs never leave your browser, cookieless aggregate counters and price tests, purchases and reminder emails, your rights under the NDPA 2023.">
 <link rel="canonical" href="https://vin-cc.github.io/dollar-filer/privacy.html">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b6b45'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3E%E2%82%A6%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css">
@@ -21,9 +21,11 @@
 <p>READ FRANCE SAS, Paris, France (SIREN 988 741 773), publisher of Dollar Filer, is the data controller. Contact for anything in this notice: <a href="mailto:octave@vread.fr">octave@vread.fr</a>. The site is run with Octave, an AI agent; a human at READ FRANCE handles data requests.</p>
 <h2>The calculator keeps nothing</h2>
 <p>Amounts you type into the calculator and the "Do I need to file?" questions are processed in your browser only. They are never sent to us or anyone else.</p>
-<h2>Visit counters, without cookies</h2>
-<p>Each page sends one anonymous count to a Google Sheet we own: the page, the event (for example "page viewed", "estimate shown", "sample downloaded"), the price shown to you, phone or desktop, the website that sent you (domain only) and any utm campaign tag in the link. No cookie, no IP address, no device identifier and no figure you typed is sent; the sheet only keeps daily totals. If your browser sends Do Not Track or Global Privacy Control, nothing is sent at all. Search-engine robots and automated browsers (recognised inside your browser; their signature is not sent) are counted separately, and a page your browser preloads counts only if you open it.</p>
-<p>To test two prices, your browser stores a random label such as "p19" in its local storage. It is not linked to you and you can clear it with your browser data.</p>
+<h2>Audience and behaviour counters, without cookies</h2>
+<p>To see which pages help and where visitors get stuck, each page sends anonymous counts to a Google Sheet we own. We count: pages viewed, the event (for example "page viewed", "estimate shown", "sample downloaded"), how far down the page you scrolled (25, 50, 75 or 100%), which sections of the page came into view, the time before your first click on a main button (in broad bands), forms started and submitted and, when a form is left unfinished, the name of the last field touched (for example "email", never what you typed in it), FAQ-style items opened, links to other websites (the domain only), technical errors (an anonymous fingerprint of the error message), page speed (Google's Core Web Vitals, as good / needs improvement / poor) and repeated clicks on the same spot. We also record the price shown to you, phone or desktop, the website that sent you (domain only) and any utm campaign tag in the link.</p>
+<p>No cookie, no identifier, no IP address kept, no personal data, no figure or text you typed: the sheet only keeps daily totals, so no visit or visitor can be told apart. Nothing is combined with other data, used to follow you across other websites, shared or sold; it serves only this site's own statistics, to improve the site. If your browser sends Do Not Track or Global Privacy Control, nothing is sent at all. Search-engine robots and automated browsers (recognised inside your browser; their signature is not sent) are counted separately, and a page your browser preloads counts only if you open it. Because READ FRANCE is a French company, we kept these counters within the French regulator's (CNIL) exemption for strictly aggregated audience measurement, which is why there is no consent banner.</p>
+<h2>Price and wording tests</h2>
+<p>Some visitors see a different version of a headline, a button or the price (for example $19 or $29, with or without the reminders add-on). The version label (such as "p19") is kept in your browser tab's session storage, which is deleted when you close the tab, and is never linked to you. The price you are charged is always the one shown on the page.</p>
 <h2>Purchases</h2>
 <p>If you buy the pack, the checkout collects your email, name, country and, if you choose, a company name and tax ID. Stripe Payments Europe processes your card; we never see the card number. Purpose: to take payment, email the files and the receipt, and handle refunds. Legal basis: the contract with you. We keep purchase records for 10 years, as French accounting law requires.</p>
 <h2>Reminder list</h2>
@@ -37,6 +39,8 @@
   <p><strong>Dollar Filer</strong> is published by READ FRANCE SAS, Paris (SIREN 988 741 773), and run with Octave, an AI agent. Contact: <a href="mailto:octave@vread.fr">octave@vread.fr</a>. Not affiliated with the Nigeria Revenue Service, the Joint Revenue Board, CBN or any State Internal Revenue Service.</p>
   <p>Estimates and general information, not tax advice. <a href="how-we-calculate.html">Sources and known gaps</a> · <a href="privacy.html">Privacy (NDPA)</a> · <a href="terms.html">Terms</a></p>
 </div></footer>
-<script src="assets/t.js?v=2"></script>
+<script src="assets/xp.js"></script>
+<script src="assets/cro.js" data-site="dollar-filer" data-api="https://script.google.com/macros/s/AKfycbwuvwAEQ_dTI61JJtVUpUUJHFAvp6On3QaF_lS06sO52LZzzfJiSEyt40lVuwABf2FJ/exec" data-hosts="vin-cc.github.io" data-cta=".btn,[data-track],#buy button"></script>
+<script src="assets/t.js?v=3"></script>
 </body>
 </html>

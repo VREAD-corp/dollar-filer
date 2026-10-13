@@ -18,7 +18,7 @@
 <h1>How the estimate is calculated, and where it can be wrong</h1>
 <p class="lede">Rules version 2026.1, checked on 13 October 2026 against the Nigeria Tax Act 2025 (Act No. 7) and the Nigeria Tax Administration Act 2025 (Act No. 5), both in the Federal Government Gazette No. 117 of 26 June 2025. We read the copies Lagos State Internal Revenue Service publishes on its <a href="https://lirs.gov.ng/tax-information/tax-legislation" rel="noopener">tax legislation page</a>.</p>
 
-<h2>The calculation, step by step</h2>
+<h2 data-section="steps">The calculation, step by step</h2>
 <table>
 <tr><th>Step</th><th>Rule</th><th>Source</th></tr>
 <tr><td>Who is taxed on worldwide income</td><td>A resident individual's income is chargeable "wherever [it] arise[s], and whether or not [it has] been brought into or received in Nigeria".</td><td>NTA s.12; residence test in s.202</td></tr>
@@ -33,10 +33,10 @@
 <tr><td>Effective rate</td><td>Tax after credits ÷ total income. Monthly set-aside = tax after credits ÷ 12.</td><td>Our definition</td></tr>
 </table>
 
-<h2>Exchange rates</h2>
+<h2 data-section="rates">Exchange rates</h2>
 <p>We copy the Central Bank of Nigeria's published "central rate" once a day from <a href="https://www.cbn.gov.ng/rates/ExchRateByCurrency.html" rel="noopener">cbn.gov.ng</a> into <a href="rates.json">rates.json</a> (latest day, monthly averages, year-to-date average for USD, GBP and EUR). The Act requires foreign-currency expenses to be converted "at the official exchange rate published by the Central Bank of Nigeria for the relevant date or period" (NTA s.20(4)). For income there is no sentence as direct. Using the CBN rate on each payday is the most defensible record; the yearly average is a planning shortcut.</p>
 
-<h2>Worked examples you can check by hand</h2>
+<h2 data-section="examples">Worked examples you can check by hand</h2>
 <table>
 <tr><th>Case</th><th>Chargeable income</th><th>Tax</th></tr>
 <tr><td>$3,000 a month salary from abroad ($36,000) at ₦1,365, rent ₦2,400,000 (relief ₦480,000)</td><td class="n">₦48,660,000</td><td class="n">₦10,121,800</td></tr>
@@ -46,7 +46,7 @@
 </table>
 <p class="small">First case by hand: ₦2,200,000 × 15% = ₦330,000; ₦9,000,000 × 18% = ₦1,620,000; ₦13,000,000 × 21% = ₦2,730,000; (₦48,660,000 − ₦25,000,000) × 23% = ₦5,441,800. Total ₦10,121,800.</p>
 
-<h2 id="gaps">Known gaps and open questions</h2>
+<h2 id="gaps" data-section="gaps">Known gaps and open questions</h2>
 <ul class="list">
 <li><strong>Currency of assessment.</strong> NTAA s.39(1) says "tax shall be assessed in the currency of transaction" and s.39(2) that tax assessed in a foreign currency is paid in that currency. The bands are in naira, and no state has said how this applies to an individual paid in dollars. We compute in naira.</li>
 <li><strong>Filing date.</strong> NTAA s.13 requires an annual return but the gazetted text does not print a date. 31 March comes from state practice (FCT-IRS public notice of 31 March 2026; LIRS press release of March 2025).</li>
@@ -58,7 +58,7 @@
 <li><strong>Not covered:</strong> capital gains and crypto disposals, presumptive tax (s.29), companies, partnerships, non-residents, state levies outside income tax.</li>
 </ul>
 
-<h2>Other sources we used</h2>
+<h2 data-section="sources">Other sources we used</h2>
 <ul class="list">
 <li>JRB and NRS notice "Nigerian Tax ID portal goes live effective January 1, 2026" (copy on <a href="https://lirs.gov.ng/assets/docs/taxid_live.pdf" rel="noopener">lirs.gov.ng</a>).</li>
 <li>FCT-IRS public notice "FCT-IRS extends deadline for filing of individual tax returns by one month", 31 March 2026, on <a href="https://fctirs.gov.ng/fct-irs-extends-deadline-for-filing-of-individual-tax-returns-by-one-month/" rel="noopener">fctirs.gov.ng</a>.</li>
@@ -66,13 +66,15 @@
 <li>Presidential Fiscal Policy and Tax Reforms Committee, "Fact not fear" #1 and #2 (copies on lirs.gov.ng/ntaa).</li>
 </ul>
 <p>Found an error? Email <a href="mailto:octave@vread.fr">octave@vread.fr</a> with the section number. We correct and date every change on this page.</p>
-<h2>Change log</h2>
+<h2 data-section="changelog">Change log</h2>
 <p class="small">2026-10-13: version 2026.1 published.</p>
 </main>
 <footer class="foot"><div class="wrap">
   <p><strong>Dollar Filer</strong> is published by READ FRANCE SAS, Paris (SIREN 988 741 773), and run with Octave, an AI agent. Contact: <a href="mailto:octave@vread.fr">octave@vread.fr</a>. Not affiliated with the Nigeria Revenue Service, the Joint Revenue Board, CBN or any State Internal Revenue Service.</p>
   <p>Estimates and general information, not tax advice. <a href="how-we-calculate.html">Sources and known gaps</a> · <a href="privacy.html">Privacy (NDPA)</a> · <a href="terms.html">Terms</a></p>
 </div></footer>
-<script src="assets/t.js?v=2"></script>
+<script src="assets/xp.js"></script>
+<script src="assets/cro.js" data-site="dollar-filer" data-api="https://script.google.com/macros/s/AKfycbwuvwAEQ_dTI61JJtVUpUUJHFAvp6On3QaF_lS06sO52LZzzfJiSEyt40lVuwABf2FJ/exec" data-hosts="vin-cc.github.io" data-cta=".btn,[data-track],#buy button"></script>
+<script src="assets/t.js?v=3"></script>
 </body>
 </html>

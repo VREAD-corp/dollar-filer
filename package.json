@@ -2,7 +2,8 @@
   "name": "dollar-filer",
   "private": true,
   "scripts": {
-    "test:unit": "node --test tests/calc.test.mjs tests/t.test.mjs",
+    "test": "npm run test:unit",
+    "test:unit": "node --test tests/calc.test.mjs tests/t.test.mjs && node tests/cro.check.mjs docs/assets/cro.js && node tests/cro-gas.check.mjs gas/src/Cro.js",
     "test:e2e": "playwright test",
     "rates": "node scripts/cbn-rates.mjs"
   },

@@ -12,9 +12,16 @@
  *          (old t.js, e.g. cached by a crawler), as `legacy`.
  *   {action:'preorder', email, variant, price, addon_shown, addon, state, consent, hp, page, utm_source}
  *       -> one row in `Preorders`. Nothing is charged: this is a pre-order list for the 2026 Return Pack.
+ *   {action:'track', kind:'cro', v:2, site:'dollar-filer', page, device, e:[[type,key,val],…]}
+ *       -> the once-per-page batch of docs/assets/cro.js (behaviour counters and the `price` A/B test), handled
+ *          by src/Cro.js (vendored byte-identical from octave-checkout): daily counters in `Comportement`
+ *          and `Experiences`, nothing per visitor.
+ *   {action:'cro', key, days|from,to} -> aggregated behaviour + A/B summary (key: Script Property CRO_KEY_SHA256).
+ *   {action:'cro_init', key} -> stores the SHA-256 of the CRO read key once (refused afterwards).
  * GET ?action=ping -> {ok:true}
  * GET ?action=stats&key=... -> today's counters (key in Script Properties STATS_KEY), used by the e2e test:
- *       rows (Stats), excluded (Exclus rows) and views {counted, excluded, raw}.
+ *       rows (Stats), excluded (Exclus rows), views {counted, excluded, raw} and cro (croSummary_ of the day).
+ * GET ?action=cro&key=... -> same as the POST `cro` action.
  */
 
 var SITE_ = 'dollar-filer';
@@ -32,6 +39,14 @@ var STATES_ = ['', 'abia', 'adamawa', 'akwa-ibom', 'anambra', 'bauchi', 'bayelsa
 var EMAIL_RE_ = /^[^\s@<>()",;:]{1,64}@[A-Za-z0-9.-]{1,253}\.[A-Za-z]{2,}$/;
 var OWN_HOSTS_ = ['vin-cc.github.io', 'dollarfiler.github.io'];
 
+// cro.js behaviour counters and A/B results (src/Cro.js). Variants = docs/assets/xp.js.
+var CRO_SITES_ = [SITE_];
+var CRO_EXPERIMENTS_ = { price: ['p19', 'p19a', 'p29', 'p29a'] };
+var CRO_TZ_ = 'Africa/Lagos'; // same day boundary as the Stats tab
+function croBook_() { return SpreadsheetApp.getActive(); }
+/** Same page names as the Stats tab (unknown paths, e.g. the 404 page, become "(other)"). */
+function croPage_(site, page) { return page_(page); }
+
 function doGet(e) {
   var p = (e && e.parameter) || {};
   try {
@@ -48,8 +63,9 @@ function doGet(e) {
       var rows = statsOfDay_(day);
       var excl = rowsOfDay_('Exclus', EXCL_HEADER_, EXCL_KEYS_, day);
       var views = function (rs) { return rs.reduce(function (n, r) { return n + (r.event === 'view' ? r.count : 0); }, 0); };
-      return json_({ ok: true, date: today_(), rows: rows, excluded: excl, views: { counted: views(rows), excluded: views(excl), raw: views(rows) + views(excl) }, preorders: preorderCount_() });
+      return json_({ ok: true, date: today_(), rows: rows, excluded: excl, views: { counted: views(rows), excluded: views(excl), raw: views(rows) + views(excl) }, preorders: preorderCount_(), cro: croSummary_(day, day) });
     }
+    if (p.action === 'cro') return json_(croAction_(p));
     return json_({ ok: true, service: SITE_ });
   } catch (err) {
     return json_({ ok: false, error: 'server' });
@@ -65,7 +81,10 @@ function doPost(e) {
   }
   if (!body || typeof body !== 'object') return json_({ ok: false, error: 'bad_json' });
   try {
-    if (body.action === 'track') return json_(track_(body));
+    // kind 'cro': the once-per-page batch of cro.js (src/Cro.js), before the counter's own validation.
+    if (body.action === 'track') return json_(body.kind === 'cro' ? croTrack_(body) : track_(body));
+    if (body.action === 'cro') return json_(croAction_(body));
+    if (body.action === 'cro_init') return json_(croInit_(body));
     if (body.action === 'preorder') return json_(preorder_(body));
     return json_({ ok: false, error: 'unknown_action' });
   } catch (err) {

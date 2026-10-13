@@ -26,6 +26,7 @@ input[type=text],input[type=number],input[type=email],select{width:100%;font:inh
 input:focus,select:focus,button:focus,a:focus{outline:3px solid #f2b705;outline-offset:1px}
 .row{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px}
 .row3{display:grid;grid-template-columns:minmax(0,1fr) 84px 104px;gap:8px}
+[hidden]{display:none!important}
 .check{display:flex;gap:8px;align-items:flex-start;margin-top:10px;font-size:.92rem}
 .check input{margin-top:4px;width:18px;height:18px;flex:none}
 .radios label{display:flex;gap:8px;align-items:center;margin:6px 0}
