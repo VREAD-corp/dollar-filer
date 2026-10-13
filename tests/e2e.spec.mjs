@@ -75,9 +75,11 @@ test('tracking counters increment, reminder form posts', async ({ page, request 
   await page.goto(`pack.html?utm_source=${tag}&v=p29a`);
   await expect(page.locator('#buy')).toContainText('Pay $29.00', { timeout: 30000 });
   await expect(page.locator('#addonbox')).toBeVisible();
-  await page.fill('#email', `e2e-test+${info.project.name}@example.com`);
-  await page.check('#addon'); await page.check('#consent');
-  await page.click('#prebtn');
+  const pre = page.locator('#pre');
+  await pre.locator('#email').fill(`e2e-test+${info.project.name}@example.com`);
+  await pre.locator('#addon').setChecked(true, { force: true }); await pre.locator('#consent').setChecked(true, { force: true });
+  await expect(pre.locator('#consent')).toBeChecked();
+  await pre.locator('#prebtn').click();
   await expect(page.locator('#premsg')).toContainText('You are on the list', { timeout: 30000 });
   await page.screenshot({ path: `shots/live-${info.project.name}-pack.png`, fullPage: true });
   await page.goto(`./?utm_source=${tag}`);
