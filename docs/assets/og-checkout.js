@@ -12,6 +12,10 @@
  * Card only by default; `paymentMethodConfiguration: 'pmc_…'` is the hook for UPI / Pix once enabled.
  * Stripe.js is loaded from https://js.stripe.com/v3/ (never self-hosted). No cookie; the only storage is the
  * octave_notrack test flag (localStorage), written only when the page URL carries ?octave_notrack=.
+ * A/B (pages running Octave's cro.js, window.octaveCro): the payment start is recorded as goal 'checkout', and the
+ * page's active variants (<html data-xp-<id>>) travel as one short `xp` string ("price:p29a") with the
+ * checkout_view / checkout_start hits and createIntent (PaymentIntent metadata), so the backend counts paid sales
+ * per variant. Without cro.js nothing changes.
  */
 (function (global) {
   'use strict';
@@ -134,6 +138,25 @@
     else fn();
   }
 
+  /** Active A/B variants set by cro.js on <html data-xp-<id>="<variant>">, as "id:variant[,id:variant]" (≤ 4
+   *  pairs, [a-z0-9-] only; anything else is skipped). '' when the page does not run cro.js. */
+  function xpOf() {
+    try {
+      if (!global.octaveCro) return '';
+      var a = document.documentElement.attributes, out = [];
+      for (var i = 0; i < a.length && out.length < 4; i++) {
+        var m = /^data-xp-([a-z0-9-]{1,24})$/.exec(a[i].name);
+        if (m && /^[a-z0-9-]{1,12}$/.test(a[i].value)) out.push(m[1] + ':' + a[i].value);
+      }
+      return out.join(',');
+    } catch (e) { return ''; }
+  }
+
+  /** Conversion goal of cro.js (counted at most once per tab by cro.js itself); nothing without it. */
+  function croGoal(name) {
+    try { if (global.octaveCro && typeof global.octaveCro.goal === 'function') global.octaveCro.goal(name); } catch (e) { /* never break the payment */ }
+  }
+
   /** Cookieless audience hit: nothing under DNT / GPC; hits that are not visits are flagged `excluded` and the
    *  backend counts them apart (Exclus tab). v: 2 marks a module that screens them (older hits count as legacy). */
   function track(opts, event) {
@@ -143,6 +166,7 @@
       var q = new URLSearchParams(global.location.search);
       var body = { v: 2, site: opts.venture, page: global.location.pathname, event: event, ref_domain: (document.referrer.split('/')[2] || ''), device: global.innerWidth < 768 ? 'mobile' : 'desktop' };
       ['source', 'medium', 'campaign'].forEach(function (k) { var v = q.get('utm_' + k); if (v) body['utm_' + k] = v; });
+      if (event === 'checkout_view' || event === 'checkout_start') { var xp = xpOf(); if (xp) body.xp = xp; }
       var x = exclusion(q);
       if (x) body.excluded = x;
       whenShown(function () {
@@ -303,6 +327,7 @@
       countrySelect.setCustomValidity(EU.indexOf(countrySelect.value) >= 0 ? L.eu : '');
       if (!form.reportValidity()) return;
       track(o, 'checkout_start');
+      if (o.track !== false) croGoal('checkout');
       setBusy(true);
       var f = form.elements;
       var isCompany = companyToggle.checked;
@@ -322,6 +347,8 @@
       };
       if (pmOpts.configuration) body.paymentMethodConfiguration = pmOpts.configuration;
       if (o.smokeToken) body.smokeToken = o.smokeToken;
+      var xp = o.track === false ? '' : xpOf();
+      if (xp) body.xp = xp;
       var key = JSON.stringify(body);
       elements.submit().then(function (r) {
         if (r.error) throw r.error;
@@ -373,6 +400,6 @@
     },
     /** Internal (unit tests): cancelIntent(endpoint, { pi, clientSecret }, lang) with one retry. */
     _cancelIntent: cancelIntent,
-    version: '1.2.0',
+    version: '1.3.0',
   };
 })(window);
