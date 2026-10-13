@@ -1,7 +1,7 @@
 {
  "source": "Central Bank of Nigeria, exchange rates (central rate, naira per unit)",
  "source_url": "https://www.cbn.gov.ng/rates/ExchRateByCurrency.html",
- "fetched_at": "2026-10-12T22:58:23.263Z",
+ "fetched_at": "2026-10-13T14:13:03.599Z",
  "latest": {
   "USD": {
    "date": "2026-10-12",
