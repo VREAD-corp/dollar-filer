@@ -10,7 +10,8 @@
  * amount), confirmPayment (redirect only if the card needs it), then POST fulfil, which e-mails the delivery
  * and the G- receipt. After a 3-D Secure redirect the same page finishes the order from the URL parameters.
  * Card only by default; `paymentMethodConfiguration: 'pmc_…'` is the hook for UPI / Pix once enabled.
- * Stripe.js is loaded from https://js.stripe.com/v3/ (never self-hosted). No cookie, no storage.
+ * Stripe.js is loaded from https://js.stripe.com/v3/ (never self-hosted). No cookie; the only storage is the
+ * octave_notrack test flag (localStorage), written only when the page URL carries ?octave_notrack=.
  */
 (function (global) {
   'use strict';
@@ -74,20 +75,80 @@
       if (!s.parentNode) document.head.appendChild(s);
     });
   }
-  function post(endpoint, body) {
-    return fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body), redirect: 'follow', credentials: 'omit' })
-      .then(function (r) { return r.json(); });
+  function post(endpoint, body, timeoutMs) {
+    var ctrl = timeoutMs && global.AbortController ? new global.AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, timeoutMs) : null;
+    return fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body), redirect: 'follow', credentials: 'omit', signal: ctrl ? ctrl.signal : undefined })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { clearTimeout(timer); return j; }, function (e) { clearTimeout(timer); throw e; });
   }
 
-  /** Cookieless audience hit (same rules as octave-checkout's mesure.js): nothing under DNT / GPC. */
+  // The backend answers a cancel in < 20 s even when Stripe hangs (8 s UrlFetch timeout per Stripe call).
+  var CANCEL_TIMEOUT_MS = 25000, CANCEL_RETRY_DELAY_MS = 1500;
+  /**
+   * Abandons an unconfirmed PaymentIntent (cancelIntent is idempotent). Retries ONCE after a network error, a
+   * timeout or an answer flagged retryable; never throws. Resolves { ok, status | error, tries }. Whatever stays
+   * open is cancelled by the backend's 24 h safety net.
+   */
+  function cancelIntent(endpoint, prev, lang) {
+    var body = { action: 'cancelIntent', payment_intent: prev.pi, client_secret: prev.clientSecret, lang: lang };
+    var tries = 0;
+    function once() {
+      tries++;
+      return post(endpoint, body, CANCEL_TIMEOUT_MS).then(function (j) {
+        if (j && j.ok) return { ok: true, status: j.status, already: !!j.already, tries: tries };
+        var e = new Error((j && j.message) || 'cancel failed');
+        e.code = (j && j.error) || 'bad_response';
+        e.retryable = !!(j && j.retryable);
+        throw e;
+      }).catch(function (e) {
+        var retryable = !e || e.retryable !== false; // network error / abort: retry; a clear refusal: no
+        if (retryable && tries < 2) return new Promise(function (r) { setTimeout(r, CANCEL_RETRY_DELAY_MS); }).then(once);
+        var code = (e && e.code) || (e && e.name === 'AbortError' ? 'timeout' : 'network');
+        if (global.console && console.warn) console.warn('OctaveCheckout: cancelIntent ' + code + ' after ' + tries + ' tries (the 24 h safety net will cancel it)');
+        return { ok: false, error: code, tries: tries };
+      });
+    }
+    return once();
+  }
+
+  var BOT_UA = /bot\b|crawl|spider|slurp|headless|lighthouse|pagespeed|inspectiontool|googleother|mediapartners|bingpreview|phantom|puppeteer|playwright|selenium/i;
+
+  /** Why this hit is not a visit ('' if it is): our own tests (?octave_notrack=1, remembered in this browser; =0
+   *  clears it), automated browsers, crawlers. Same rules as veille-ao-afrique's mesure.js. The user agent is only
+   *  read here, never sent. */
+  function exclusion(q) {
+    var n = global.navigator || {}, x = '', s;
+    try { s = global.localStorage; if (q.has('octave_notrack')) { if (q.get('octave_notrack') === '1') s.setItem('octave_notrack', '1'); else s.removeItem('octave_notrack'); } x = s.getItem('octave_notrack') === '1' ? 'notrack' : ''; } catch (e) { /* storage blocked */ }
+    if (!x && q.get('octave_notrack') === '1') x = 'notrack';
+    if (!x && n.webdriver) x = 'webdriver';
+    if (!x && BOT_UA.test(n.userAgent || '')) x = 'bot';
+    return x;
+  }
+
+  /** Runs fn now, or once a prerendered / prefetched page is actually shown (never if it is not). */
+  function whenShown(fn) {
+    var d = document;
+    if (d.prerendering) d.addEventListener('prerenderingchange', fn, { once: true });
+    else if (d.visibilityState === 'prerender') d.addEventListener('visibilitychange', function v() { if (d.visibilityState !== 'prerender') { d.removeEventListener('visibilitychange', v); fn(); } });
+    else fn();
+  }
+
+  /** Cookieless audience hit: nothing under DNT / GPC; hits that are not visits are flagged `excluded` and the
+   *  backend counts them apart (Exclus tab). v: 2 marks a module that screens them (older hits count as legacy). */
   function track(opts, event) {
     try {
       var n = global.navigator || {};
       if (!opts.venture || opts.track === false || n.doNotTrack === '1' || n.globalPrivacyControl) return;
       var q = new URLSearchParams(global.location.search);
-      var body = { site: opts.venture, page: global.location.pathname, event: event, ref_domain: (document.referrer.split('/')[2] || ''), device: global.innerWidth < 768 ? 'mobile' : 'desktop', ts: Date.now() };
+      var body = { v: 2, site: opts.venture, page: global.location.pathname, event: event, ref_domain: (document.referrer.split('/')[2] || ''), device: global.innerWidth < 768 ? 'mobile' : 'desktop' };
       ['source', 'medium', 'campaign'].forEach(function (k) { var v = q.get('utm_' + k); if (v) body['utm_' + k] = v; });
-      fetch(opts.endpoint + '?action=track', { method: 'POST', keepalive: true, credentials: 'omit', redirect: 'manual', body: JSON.stringify(body) }).catch(function () {});
+      var x = exclusion(q);
+      if (x) body.excluded = x;
+      whenShown(function () {
+        body.ts = Date.now();
+        fetch(opts.endpoint + '?action=track', { method: 'POST', keepalive: true, credentials: 'omit', redirect: 'manual', body: JSON.stringify(body) }).catch(function () {});
+      });
     } catch (e) { /* never break the page */ }
   }
 
@@ -275,7 +336,13 @@
             throw null;
           }
           // An edited form gives a new order: abandon the previous, unconfirmed PaymentIntent.
-          if (previous) post(o.endpoint, { action: 'cancelIntent', payment_intent: previous.pi, client_secret: previous.clientSecret }).catch(function () {});
+          if (previous) {
+            root.setAttribute('data-ogc-cancel', 'pending');
+            cancelIntent(o.endpoint, previous, lang).then(function (c) {
+              root.setAttribute('data-ogc-cancel', c.ok ? 'ok' : 'failed');
+              if (typeof o.onCancel === 'function') { try { o.onCancel({ paymentIntent: previous.pi, ok: c.ok, error: c.error, tries: c.tries }); } catch (e) { /* page callback */ } }
+            });
+          }
           pending = { key: key, clientSecret: j.client_secret, pi: j.payment_intent };
           return pending;
         });
@@ -304,6 +371,8 @@
     track: function (venture, event, opts) {
       track({ venture: venture, endpoint: (opts && opts.endpoint) || DEFAULTS.endpoint, track: true }, event);
     },
-    version: '1.0.0',
+    /** Internal (unit tests): cancelIntent(endpoint, { pi, clientSecret }, lang) with one retry. */
+    _cancelIntent: cancelIntent,
+    version: '1.2.0',
   };
 })(window);
