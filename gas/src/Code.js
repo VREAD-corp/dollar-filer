@@ -8,7 +8,8 @@
  *          no cookie, no identifier: whitelisted fields only, one counter row per day x page x event x
  *          variant x source, never one row per visit. A hit flagged `excluded` by t.js (crawler or
  *          headless user agent checked in the browser, navigator.webdriver, or our tests with
- *          octave_notrack=1) goes to the `Exclus` tab by reason instead of `Stats`.
+ *          octave_notrack=1) goes to the `Exclus` tab by reason instead of `Stats`; so does a hit without `v`
+ *          (old t.js, e.g. cached by a crawler), as `legacy`.
  *   {action:'preorder', email, variant, price, addon_shown, addon, state, consent, hp, page, utm_source}
  *       -> one row in `Preorders`. Nothing is charged: this is a pre-order list for the 2026 Return Pack.
  * GET ?action=ping -> {ok:true}
@@ -21,7 +22,8 @@ var STATS_HEADER_ = ['date', 'page', 'event', 'variant', 'source', 'medium', 'ca
 var STATS_KEYS_ = 7;
 var EXCL_HEADER_ = ['date', 'page', 'event', 'variant', 'reason', 'count', 'mobile', 'desktop', 'updated_at'];
 var EXCL_KEYS_ = 5;
-var EXCL_REASONS_ = ['webdriver', 'bot', 'notrack'];
+// legacy: a hit without v (t.js before 2026-10-13, still cached by search-engine renderers) cannot be screened.
+var EXCL_REASONS_ = ['webdriver', 'bot', 'notrack', 'legacy'];
 var PRE_HEADER_ = ['at', 'email', 'price_usd', 'variant', 'addon_shown', 'addon_wanted', 'state', 'source', 'page', 'status'];
 var EVENTS_ = ['view', 'calc_done', 'print', 'pack_view', 'preorder_open', 'preorder_submit', 'sample_download', 'guide_check', 'checkout_view', 'checkout_start', 'paid'];
 var PAGES_ = ['/', '/file.html', '/pack.html', '/how-we-calculate.html', '/privacy.html', '/terms.html'];
@@ -126,7 +128,7 @@ function track_(req) {
     medium: token_(req.utm_medium, 30),
     campaign: token_(req.utm_campaign, 40),
     device: req.device === 'mobile' || req.device === 'desktop' ? req.device : '',
-    reason: req.excluded ? (EXCL_REASONS_.indexOf(String(req.excluded)) >= 0 ? String(req.excluded) : 'bot') : ''
+    reason: req.excluded ? (EXCL_REASONS_.indexOf(String(req.excluded)) >= 0 ? String(req.excluded) : 'bot') : (req.v ? '' : 'legacy')
   };
   if (!rateOk_('track', 300)) return { ok: false, error: 'rate_limited' };
   var lock = LockService.getScriptLock();

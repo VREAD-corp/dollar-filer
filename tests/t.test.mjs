@@ -31,6 +31,7 @@ test('a normal visit is counted, without the user agent', () => {
   const r = run();
   assert.equal(views(r).length, 1);
   assert.ok(!('excluded' in r.sent[0]));
+  assert.equal(r.sent[0].v, 2, 'snippet version: hits without it are counted as legacy');
   assert.ok(!JSON.stringify(r.sent).includes('Chrome'));
 });
 

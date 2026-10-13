@@ -22,7 +22,7 @@
   if (!x && q.get('octave_notrack') == '1') x = 'notrack';
   if (!x && n.webdriver) x = 'webdriver';
   if (!x && /bot\b|crawl|spider|slurp|headless|lighthouse|pagespeed|inspectiontool|googleother|mediapartners|bingpreview|phantom|puppeteer|playwright|selenium/i.test(n.userAgent || '')) x = 'bot';
-  var b = { action: 'track', page: l.pathname, variant: v, ref_domain: (d.referrer.split('/')[2] || ''), device: innerWidth < 768 ? 'mobile' : 'desktop' };
+  var b = { action: 'track', page: l.pathname, variant: v, ref_domain: (d.referrer.split('/')[2] || ''), device: innerWidth < 768 ? 'mobile' : 'desktop', v: 2 };
   ['source', 'medium', 'campaign'].forEach(function (k) { b['utm_' + k] = q.get('utm_' + k) || ''; });
   if (x) b.excluded = x;
   window.dfTrack = function (ev) {
