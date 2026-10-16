@@ -11,7 +11,7 @@ const src = read('t.js'), xp = read('xp.js'), cro = read('cro.js');
 const CHROME = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36';
 const GOOGLEBOT = 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.0 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
 
-function run({ ua = CHROME, webdriver = false, search = '', store = {}, session = {}, prerendering = false, visibility = 'visible', dnt = '', host = 'vin-cc.github.io', withCro = false } = {}) {
+function run({ ua = CHROME, webdriver = false, search = '', store = {}, session = {}, prerendering = false, visibility = 'visible', dnt = '', host = 'dollar-filer.jalonel.com', withCro = false } = {}) {
   const sent = [], listeners = {};
   const doc = {
     referrer: '', prerendering, visibilityState: visibility, querySelectorAll: () => [], readyState: 'loading', forms: [],
@@ -23,14 +23,14 @@ function run({ ua = CHROME, webdriver = false, search = '', store = {}, session 
   const ctx = {
     navigator: { userAgent: ua, webdriver, doNotTrack: dnt }, document: doc, localStorage: ls, sessionStorage: st(session), innerWidth: 390, URLSearchParams, JSON, Math, Intl, RegExp,
     addEventListener: () => {},
-    location: { hostname: host, pathname: '/dollar-filer/', search },
+    location: { hostname: host, pathname: '/', search },
     fetch: (u, o) => { assert.equal(o.credentials, 'omit'); sent.push(JSON.parse(o.body)); return Promise.resolve(); },
   };
   ctx.window = ctx;
   vm.createContext(ctx);
   if (withCro) {
     vm.runInContext(xp, ctx);
-    doc.currentScript = { dataset: { site: 'dollar-filer', api: 'https://script.google.com/macros/s/TEST/exec', hosts: 'vin-cc.github.io' } };
+    doc.currentScript = { dataset: { site: 'dollar-filer', api: 'https://script.google.com/macros/s/TEST/exec', hosts: 'dollar-filer.jalonel.com outils.vread.fr' } };
     vm.runInContext(cro, ctx);
     doc.currentScript = null;
   }
@@ -69,6 +69,11 @@ test('octave_notrack=1 (query, remembered; =0 clears) flags our own tests, for e
 test('Do Not Track and foreign hosts send nothing', () => {
   assert.equal(run({ dnt: '1' }).sent.length, 0);
   assert.equal(run({ host: 'localhost' }).sent.length, 0);
+  assert.equal(run({ host: 'evil-dollar-filer.jalonel.com.example' }).sent.length, 0);
+});
+
+test('the Jalonel host and the old hosts are counted', () => {
+  for (const host of ['dollar-filer.jalonel.com', 'outils.vread.fr', 'vin-cc.github.io']) assert.equal(views(run({ host })).length, 1, host);
 });
 
 test('prerendered pages count only once opened', () => {

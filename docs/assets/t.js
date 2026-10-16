@@ -13,7 +13,7 @@
   window.dfVariant = v;
   window.dfPrice = v.indexOf('p29') === 0 ? 29 : 19;
   window.dfAddon = /a$/.test(v);
-  var on = !(n.doNotTrack == '1' || n.globalPrivacyControl) && /(^|\.)github\.io$/.test(l.hostname);
+  var on = !(n.doNotTrack == '1' || n.globalPrivacyControl) && /(^|\.)github\.io$|^dollar-filer\.jalonel\.com$|^outils\.vread\.fr$/.test(l.hostname);
   // Not a visit: our tests (?octave_notrack=1, kept in this browser; =0 clears it), navigator.webdriver, crawler or
   // headless user agents. The user agent is only read here, never sent.
   var x = '', s;

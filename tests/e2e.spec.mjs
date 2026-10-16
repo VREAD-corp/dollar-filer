@@ -83,6 +83,7 @@ test('file guide answers and no horizontal scroll', async ({ page }, info) => {
     await page.goto(p);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(info.project.use.viewport.width);
     await expect(page.locator('footer')).toContainText('988 741 773');
+    await expect(page.locator('footer a[href="https://jalonel.com/en/"]')).toHaveText('A Jalonel brand');
   }
   await page.goto('file.html');
   await page.check('input[name=q1][value=yes]'); await page.check('input[name=q2][value=yes]'); await page.check('input[name=q3][value=yes]');
