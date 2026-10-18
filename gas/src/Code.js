@@ -37,7 +37,7 @@ var PAGES_ = ['/', '/file.html', '/pack.html', '/how-we-calculate.html', '/priva
 var VARIANTS_ = ['', 'p19', 'p29', 'p19a', 'p29a'];
 var STATES_ = ['', 'abia', 'adamawa', 'akwa-ibom', 'anambra', 'bauchi', 'bayelsa', 'benue', 'borno', 'cross-river', 'delta', 'ebonyi', 'edo', 'ekiti', 'enugu', 'fct', 'gombe', 'imo', 'jigawa', 'kaduna', 'kano', 'katsina', 'kebbi', 'kogi', 'kwara', 'lagos', 'nasarawa', 'niger', 'ogun', 'ondo', 'osun', 'oyo', 'plateau', 'rivers', 'sokoto', 'taraba', 'yobe', 'zamfara', 'abroad'];
 var EMAIL_RE_ = /^[^\s@<>()",;:]{1,64}@[A-Za-z0-9.-]{1,253}\.[A-Za-z]{2,}$/;
-var OWN_HOSTS_ = ['dollar-filer.jalonel.com', 'outils.vread.fr', 'vin-cc.github.io', 'dollarfiler.github.io'];
+var OWN_HOSTS_ = ['dollar-filer.jalonel.com', 'vin-cc.github.io', 'dollarfiler.github.io'];
 
 // cro.js behaviour counters and A/B results (src/Cro.js). Variants = docs/assets/xp.js.
 var CRO_SITES_ = [SITE_];

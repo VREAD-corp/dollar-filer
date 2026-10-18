@@ -113,3 +113,10 @@ test('without cro.js the page still gets a valid variant (?v= or a draw), never 
   assert.match(r.ctx.dfVariant, /^p(19|29)a?$/);
   assert.ok(!('df_v' in r.store));
 });
+
+test('backend names no Vread host or address and sends no e-mail', () => {
+  const code = fs.readFileSync(new URL('../gas/src/Code.js', import.meta.url), 'utf8');
+  assert.ok(!/vread/i.test(code));
+  // No MailApp/GmailApp: no reply-to to set. If one is ever added, it must reply to contact@jalonel.com.
+  assert.ok(!/MailApp|GmailApp/.test(code));
+});
