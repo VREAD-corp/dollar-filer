@@ -55,7 +55,7 @@
   function run(fromSubmit) {
     var inp = input(), r = DF.calculate(inp), st = sel.value, res = $('resident').value;
     var out = [];
-    if (r.totalIncome <= 0 && !fromSubmit) { $('out').innerHTML = '<p class="small">Type an amount on the left. The estimate updates as you type.</p>'; return; }
+    if (r.totalIncome <= 0 && !fromSubmit) { $('out').innerHTML = '<p class="small">Type an amount in the form. The estimate updates as you type.</p>'; return; }
     if (res === 'no' || st === 'abroad') out.push('<div class="note"><strong>If you are not a Nigerian tax resident,</strong> your foreign pay is generally outside Nigerian tax: non-residents are taxed on income from Nigeria, and money merely brought into Nigeria is not taxed for that reason (NTA 2025 s.4, s.17). The figures below assume you are resident, so they overstate your position.</div>');
     if (res === 'unsure') out.push('<div class="note">The residence test is wide: any one of these makes you resident for 2026: domiciled in Nigeria, a home available to you here, your habitual abode here, substantial economic and family ties here, 183 days or more here in 12 months (NTA 2025 s.202). <a href="file.html#resident">Check the test</a>.</div>');
     var usd = inp.fx.USD || 0;
