@@ -30,7 +30,7 @@ function run({ ua = CHROME, webdriver = false, search = '', store = {}, session 
   vm.createContext(ctx);
   if (withCro) {
     vm.runInContext(xp, ctx);
-    doc.currentScript = { dataset: { site: 'dollar-filer', api: 'https://script.google.com/macros/s/TEST/exec', hosts: 'dollar-filer.jalonel.com outils.vread.fr' } };
+    doc.currentScript = { dataset: { site: 'dollar-filer', api: 'https://script.google.com/macros/s/TEST/exec', hosts: 'dollar-filer.jalonel.com' } };
     vm.runInContext(cro, ctx);
     doc.currentScript = null;
   }
@@ -72,8 +72,9 @@ test('Do Not Track and foreign hosts send nothing', () => {
   assert.equal(run({ host: 'evil-dollar-filer.jalonel.com.example' }).sent.length, 0);
 });
 
-test('the Jalonel host and the old hosts are counted', () => {
-  for (const host of ['dollar-filer.jalonel.com', 'outils.vread.fr', 'vin-cc.github.io']) assert.equal(views(run({ host })).length, 1, host);
+test('the Jalonel host and the old github.io host are counted, no other host', () => {
+  for (const host of ['dollar-filer.jalonel.com', 'vin-cc.github.io']) assert.equal(views(run({ host })).length, 1, host);
+  assert.equal(run({ host: 'example.com' }).sent.length, 0);
 });
 
 test('prerendered pages count only once opened', () => {

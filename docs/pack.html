@@ -48,7 +48,7 @@
     <label for="pstate">State you file in</label>
     <select id="pstate" name="state"><option value="">Choose (optional)</option><option value="lagos">Lagos</option><option value="fct">FCT (Abuja)</option><option value="ogun">Ogun</option><option value="rivers">Rivers</option><option value="oyo">Oyo</option><option value="edo">Edo</option><option value="enugu">Enugu</option><option value="kano">Kano</option><option value="kaduna">Kaduna</option><option value="delta">Delta</option><option value="anambra">Anambra</option><option value="abroad">I live abroad</option></select>
     <div class="check" id="addonbox" hidden><input id="addon" type="checkbox"><label for="addon" style="margin:0">I would pay $5 a month for "records and reminders": an email on the 5th to log last month's payments, and before each deadline.</label></div>
-    <div class="check"><input id="consent" type="checkbox" required><label for="consent" style="margin:0">Keep my email for this reminder. Nothing else; I can ask for deletion at octave@vread.fr (<a href="privacy.html">privacy</a>).</label></div>
+    <div class="check"><input id="consent" type="checkbox" required><label for="consent" style="margin:0">Keep my email for this reminder. Nothing else; I can ask for deletion at contact@jalonel.com (<a href="privacy.html">privacy</a>).</label></div>
     <div class="hp" aria-hidden="true"><label for="website">Leave empty</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
     <p><button class="btn ghost" type="submit" id="prebtn">Email me the reminder</button></p>
     <p class="msg" id="premsg" role="status"></p>
@@ -58,7 +58,7 @@
 
 <section class="band" id="faq" data-section="faq">
   <h2>Questions before you buy</h2>
-  <details id="faq-refund"><summary>Can I get my money back?</summary><p>Yes. Full refund within 14 days of delivery, no questions asked: reply to the delivery email or write to <a href="mailto:octave@vread.fr">octave@vread.fr</a> (<a href="terms.html">terms</a>).</p></details>
+  <details id="faq-refund"><summary>Can I get my money back?</summary><p>Yes. Full refund within 14 days of delivery, no questions asked: reply to the delivery email or write to <a href="mailto:contact@jalonel.com">contact@jalonel.com</a> (<a href="terms.html">terms</a>).</p></details>
   <details id="faq-update"><summary>What if the rules change before the deadline?</summary><p>If the rules or the state forms change before 31 March 2027, we email you the updated files free.</p></details>
   <details id="faq-receipt"><summary>Do I get a receipt? Can my company pay?</summary><p>A receipt is emailed with the files. At checkout, tick "I am buying for a company" to put the company name and its tax ID on it.</p></details>
   <details id="faq-naira"><summary>Can I pay with a naira card?</summary><p>The checkout charges in US dollars only. Naira cards with an FX limit may be declined; a USD virtual or domiciliary card works best, and your bank may add a foreign-transaction fee.</p></details>
@@ -70,11 +70,11 @@
 </section>
 </main>
 <footer class="foot"><div class="wrap">
-  <p><strong>Dollar Filer</strong> · <a href="https://jalonel.com/en/">A Jalonel brand</a>. Jalonel is a brand of READ FRANCE SAS, Paris (SIREN 988 741 773); the site is run with Octave, an AI agent. Contact: <a href="mailto:octave@vread.fr">octave@vread.fr</a>. Not affiliated with the Nigeria Revenue Service, the Joint Revenue Board, CBN or any State Internal Revenue Service.</p>
+  <p><strong>Dollar Filer</strong> · <a href="https://jalonel.com/en/">A Jalonel brand</a>. Jalonel is a brand of READ FRANCE SAS, Paris (SIREN 988 741 773); the site is run with Octave, an AI agent. Contact: <a href="mailto:contact@jalonel.com">contact@jalonel.com</a>. Not affiliated with the Nigeria Revenue Service, the Joint Revenue Board, CBN or any State Internal Revenue Service.</p>
   <p>Estimates and general information, not tax advice. <a href="how-we-calculate.html">Sources and known gaps</a> · <a href="privacy.html">Privacy (NDPA)</a> · <a href="terms.html">Terms</a></p>
 </div></footer>
 <script src="assets/xp.js"></script>
-<script src="assets/cro.js" data-site="dollar-filer" data-api="https://script.google.com/macros/s/AKfycbwuvwAEQ_dTI61JJtVUpUUJHFAvp6On3QaF_lS06sO52LZzzfJiSEyt40lVuwABf2FJ/exec" data-hosts="dollar-filer.jalonel.com outils.vread.fr" data-cta=".btn,[data-track],#buy button"></script>
+<script src="assets/cro.js" data-site="dollar-filer" data-api="https://script.google.com/macros/s/AKfycbwuvwAEQ_dTI61JJtVUpUUJHFAvp6On3QaF_lS06sO52LZzzfJiSEyt40lVuwABf2FJ/exec" data-hosts="dollar-filer.jalonel.com" data-cta=".btn,[data-track],#buy button"></script>
 <script src="assets/t.js?v=4"></script>
 <script src="assets/og-checkout.js?v=1.3.0"></script>
 <script>
@@ -85,7 +85,7 @@
     OctaveCheckout.mount('#buy',{product:'dollar-filer-pack-'+p+'-usd',amount:p*100,currency:'usd',venture:'af-ng-02',lang:'en',country:'NG',
       onSuccess:function(){window.dfTrack&&window.dfTrack('paid');window.octaveCro&&octaveCro.goal('paid');}});
     window.dfTrack&&window.dfTrack('checkout_view');
-  }catch(e){buy.innerHTML='<p class="msg err">The card form could not load. Email octave@vread.fr and we will send a payment link.</p>';}
+  }catch(e){buy.innerHTML='<p class="msg err">The card form could not load. Email contact@jalonel.com and we will send a payment link.</p>';}
 })();
 </script>
 <script>
@@ -104,8 +104,8 @@
     var body={action:'preorder',email:email,variant:window.dfVariant,addon_shown:!!window.dfAddon,addon:!!(window.dfAddon&&document.getElementById('addon').checked),state:f.state.value,consent:true,hp:f.website.value,page:location.pathname,utm_source:q.get('utm_source')||''};
     fetch(E,{method:'POST',headers:{'content-type':'text/plain'},body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(j){
       if(j&&j.ok){m.textContent='Done. You are on the list. Expect one email in early January 2027.';window.octaveCro&&octaveCro.goal('waitlist');f.reset();}
-      else{m.className='msg err';m.textContent=j&&j.error==='bad_email'?'Check the email address.':'That did not go through. Try again, or email octave@vread.fr.';}
-    }).catch(function(){m.className='msg err';m.textContent='Network problem. Try again, or email octave@vread.fr.';}).then(function(){btn.disabled=false;});
+      else{m.className='msg err';m.textContent=j&&j.error==='bad_email'?'Check the email address.':'That did not go through. Try again, or email contact@jalonel.com.';}
+    }).catch(function(){m.className='msg err';m.textContent='Network problem. Try again, or email contact@jalonel.com.';}).then(function(){btn.disabled=false;});
   });
 })();
 </script>

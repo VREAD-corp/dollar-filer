@@ -19,7 +19,7 @@ jobs:
         run: |
           git diff --quiet docs/rates.json && { echo "no change"; exit 0; }
           git config user.name "dollar-filer-bot"
-          git config user.email "octave@vread.fr"
+          git config user.email "contact@jalonel.com"
           git add docs/rates.json
           git commit -m "rates: CBN $(date -u +%F)"
           git push

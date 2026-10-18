@@ -12,7 +12,7 @@ async function load() {
   for (let i = 1; i <= 3; i++) {
     try {
       const r = await fetch('https://www.cbn.gov.ng/api/GetAllExchangeRates', {
-        headers: { 'user-agent': 'Mozilla/5.0 (dollar-filer rates job; contact octave@vread.fr)', accept: 'application/json' },
+        headers: { 'user-agent': 'Mozilla/5.0 (dollar-filer rates job; contact contact@jalonel.com)', accept: 'application/json' },
         signal: AbortSignal.timeout(280000),
       });
       if (!r.ok) throw new Error('HTTP ' + r.status);
