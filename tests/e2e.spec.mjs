@@ -2,7 +2,10 @@
 import { test, expect } from '@playwright/test';
 const API = 'https://script.google.com/macros/s/AKfycbwuvwAEQ_dTI61JJtVUpUUJHFAvp6On3QaF_lS06sO52LZzzfJiSEyt40lVuwABf2FJ/exec';
 const KEY = process.env.STATS_KEY || '';
+// The secondary inputs (state, costs, rates, reliefs, tax paid) sit in a closed <details> under the button since 2026-10-19.
+const more = async (page) => { await page.evaluate(() => { document.getElementById('more-fields').open = true; }); };
 const ownRates = async (page, usd, gbp, eur) => {
+  await more(page);
   await page.check('input[name=fxmode][value=own]');
   await page.fill('#fx_USD', String(usd)); await page.fill('#fx_GBP', String(gbp)); await page.fill('#fx_EUR', String(eur));
 };
@@ -17,6 +20,7 @@ test.beforeEach(async ({ page }) => { await page.addInitScript(() => { try { loc
 
 test('case A: $3,000/month salary, rent 2.4m, Lagos', async ({ page }, info) => {
   await page.goto('./');
+  await more(page);
   await page.selectOption('#state', 'lagos');
   await ownRates(page, 1365, 1835, 1584);
   await page.fill('#fs', '3000'); await page.selectOption('#fs_per', '12');

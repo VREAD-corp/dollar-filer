@@ -78,3 +78,8 @@ footer.foot a{color:var(--muted)}
   a{color:#000}
 }
 .result.next{margin-top:14px}.result.next .btn{margin:2px 0}.cta-row .btn{margin-right:12px}
+/* 2026-10-19: secondary inputs folded under the button so the calculator fits the first mobile screen. */
+details.more{margin:0 0 12px}
+details.more>summary{cursor:pointer;color:var(--muted);padding:10px 0;font-size:.95rem}
+details.more[open]>summary{margin-bottom:8px}
+#calc>.btn{margin:0 0 6px}
