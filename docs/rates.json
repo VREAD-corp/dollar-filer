@@ -1,42 +1,42 @@
 {
  "source": "Central Bank of Nigeria, exchange rates (central rate, naira per unit)",
  "source_url": "https://www.cbn.gov.ng/rates/ExchRateByCurrency.html",
- "fetched_at": "2026-10-19T13:17:32.672Z",
+ "fetched_at": "2026-10-20T11:38:20.075Z",
  "latest": {
   "USD": {
-   "date": "2026-10-16",
-   "rate": 1331.7582
+   "date": "2026-10-19",
+   "rate": 1333.2568
   },
   "GBP": {
-   "date": "2026-10-16",
-   "rate": 1764.4464
+   "date": "2026-10-19",
+   "rate": 1777.6313
   },
   "EUR": {
-   "date": "2026-10-16",
-   "rate": 1490.637
+   "date": "2026-10-19",
+   "rate": 1496.8474
   }
  },
  "ytd": {
   "USD": {
    "year": "2026",
    "from": "2026-01-02",
-   "to": "2026-10-16",
-   "days": 196,
-   "rate": 1364.45
+   "to": "2026-10-19",
+   "days": 197,
+   "rate": 1364.29
   },
   "GBP": {
    "year": "2026",
    "from": "2026-01-02",
-   "to": "2026-10-16",
-   "days": 195,
-   "rate": 1833.75
+   "to": "2026-10-19",
+   "days": 196,
+   "rate": 1833.46
   },
   "EUR": {
    "year": "2026",
    "from": "2026-01-02",
-   "to": "2026-10-16",
-   "days": 196,
-   "rate": 1581.61
+   "to": "2026-10-19",
+   "days": 197,
+   "rate": 1581.18
   }
  },
  "months": {
@@ -146,10 +146,10 @@
    "EUR": 1527.67
   },
   "2026-10": {
-   "USD": 1331.25,
-   "GBP": 1761.74,
-   "EUR": 1491.39
+   "USD": 1331.42,
+   "GBP": 1763.06,
+   "EUR": 1491.84
   }
  },
- "latest_date": "2026-10-16"
+ "latest_date": "2026-10-19"
 }
