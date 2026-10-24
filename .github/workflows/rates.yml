@@ -1,7 +1,6 @@
 name: CBN rates
 on:
-  schedule:
-    - cron: '17 6 * * 1-5'   # 07:17 Lagos, after CBN publishes the previous day
+  # Schedule removed on 2026-10-24: site paused (founders' decision). Was: cron '17 6 * * 1-5' (07:17 Lagos).
   workflow_dispatch: {}
 permissions:
   contents: write

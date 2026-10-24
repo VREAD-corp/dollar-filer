@@ -1,5 +1,7 @@
 # Dollar Filer
 
+**En pause depuis le 24/10/2026** (décision des fondateurs, recentrage Jalonel) : noindex, bandeau, demandes fermées ; tracking conservé.
+
 Free 2026 income-tax estimator and "Do I need to file?" guide for people living in Nigeria and paid in USD, GBP or EUR, under the Nigeria Tax Act 2025 (in force 1 January 2026). Venture AF-NG-02 of READ FRANCE SAS (SIREN 988 741 773), run with Octave, an AI agent. Contact: contact@jalonel.com.
 
 Live: https://dollar-filer.jalonel.com/ (brand Jalonel, a brand of READ FRANCE SAS; hub https://jalonel.com/en/). Moved on 2026-10-16 from https://vin-cc.github.io/dollar-filer/, whose pages now redirect (stubs in `Vin-CC/Vin-CC.github.io/dollar-filer/`); the repo moved from Vin-CC to VREAD-corp the same day.
