@@ -10,6 +10,9 @@
  * amount), confirmPayment (redirect only if the card needs it), then POST fulfil, which e-mails the delivery
  * and the G- receipt. After a 3-D Secure redirect the same page finishes the order from the URL parameters.
  * Card only by default; `paymentMethodConfiguration: 'pmc_…'` is the hook for UPI / Pix once enabled.
+ * Country allowlist (1.4.0): `countries: ['US']`, or the product's `countries` from the catalog, limits the country list.
+ * Tests (1.5.0): a test utm tag (e2e-…, smoke, selftest, test-…) counts like ?octave_notrack=1, and createIntent
+ * carries `test` (notrack | webdriver) so the backend marks the PaymentIntent and leaves it out of the funnel.
  * Stripe.js is loaded from https://js.stripe.com/v3/ (never self-hosted). No cookie; the only storage is the
  * octave_notrack test flag (localStorage), written only when the page URL carries ?octave_notrack=.
  * A/B (pages running Octave's cro.js, window.octaveCro): the payment start is recorded as goal 'checkout', and the
@@ -33,10 +36,10 @@
   var EU = 'AT BE BG HR CY CZ DK EE FI FR DE GR HU IE IT LV LT LU MT NL PL PT RO SK SI ES SE MC'.split(' ');
   var ZERO_DECIMAL = ['xof', 'xaf', 'vnd', 'clp', 'jpy', 'krw', 'pyg', 'rwf', 'bif', 'djf', 'gnf', 'kmf', 'mga', 'vuv', 'xpf'];
   var T = {
-    en: { email: 'E-mail', name: 'Full name', country: 'Country', choose: 'Choose…', company: 'I am buying for a company', companyName: 'Company name', taxId: 'Tax ID (optional)', pay: 'Pay {price}', paying: 'Processing…', loading: 'Loading secure payment…', stale: 'The displayed price is out of date (current price: {price}). Please reload the page.', eu: 'This checkout serves buyers outside the European Union only.', loadFail: 'The payment form could not be loaded. Please reload the page.', done: 'Payment confirmed. We sent your order to {email}.', doneHelp: 'Order {order}. Please check your spam folder.', confirming: 'Confirming your payment…', later: 'If you close this page, your order will still be e-mailed within 10 minutes.', failed: 'The payment did not go through. Nothing was charged.', unreachable: 'The service cannot be reached right now.', secure: 'Payments are processed by Stripe for READ FRANCE SAS (France). No French VAT applies to buyers outside the EU.' },
-    fr: { email: 'E-mail', name: 'Nom complet', country: 'Pays', choose: 'Choisir…', company: 'J’achète pour une entreprise', companyName: 'Nom de l’entreprise', taxId: 'Numéro fiscal (facultatif)', pay: 'Payer {price}', paying: 'Paiement en cours…', loading: 'Chargement du paiement sécurisé…', stale: 'Le prix affiché n’est plus à jour (prix actuel : {price}). Rechargez la page.', eu: 'Ce paiement est réservé aux acheteurs situés hors de l’Union européenne.', loadFail: 'Le module de paiement n’a pas pu être chargé. Rechargez la page.', done: 'Paiement confirmé. Votre commande a été envoyée à {email}.', doneHelp: 'Commande {order}. Pensez à vérifier vos courriers indésirables.', confirming: 'Confirmation du paiement…', later: 'Si vous fermez cette page, votre commande vous sera tout de même envoyée dans les 10 minutes.', failed: 'Le paiement n’a pas abouti. Aucun montant n’a été débité.', unreachable: 'Le service est momentanément injoignable.', secure: 'Paiement traité par Stripe pour READ FRANCE SAS (France). Pas de TVA française pour les acheteurs hors UE.' },
-    pt: { email: 'E-mail', name: 'Nome completo', country: 'País', choose: 'Escolha…', company: 'Estou comprando para uma empresa', companyName: 'Nome da empresa', taxId: 'Número fiscal (opcional)', pay: 'Pagar {price}', paying: 'Processando…', loading: 'Carregando o pagamento seguro…', stale: 'O preço exibido está desatualizado (preço atual: {price}). Recarregue a página.', eu: 'Este pagamento é reservado a compradores fora da União Europeia.', loadFail: 'Não foi possível carregar o formulário de pagamento. Recarregue a página.', done: 'Pagamento confirmado. Enviamos seu pedido para {email}.', doneHelp: 'Pedido {order}. Verifique também a caixa de spam.', confirming: 'Confirmando seu pagamento…', later: 'Se você fechar esta página, seu pedido será enviado por e-mail em até 10 minutos.', failed: 'O pagamento não foi concluído. Nada foi cobrado.', unreachable: 'O serviço está indisponível no momento.', secure: 'Pagamento processado pela Stripe para a READ FRANCE SAS (França).' },
-    es: { email: 'Correo electrónico', name: 'Nombre completo', country: 'País', choose: 'Elegir…', company: 'Compro para una empresa', companyName: 'Nombre de la empresa', taxId: 'Número fiscal (opcional)', pay: 'Pagar {price}', paying: 'Procesando…', loading: 'Cargando el pago seguro…', stale: 'El precio mostrado no está actualizado (precio actual: {price}). Recargue la página.', eu: 'Este pago está reservado a compradores fuera de la Unión Europea.', loadFail: 'No se pudo cargar el formulario de pago. Recargue la página.', done: 'Pago confirmado. Enviamos su pedido a {email}.', doneHelp: 'Pedido {order}. Revise también la carpeta de spam.', confirming: 'Confirmando su pago…', later: 'Si cierra esta página, su pedido se le enviará por correo en un plazo de 10 minutos.', failed: 'El pago no se completó. No se ha cobrado nada.', unreachable: 'El servicio no está disponible en este momento.', secure: 'Pago procesado por Stripe para READ FRANCE SAS (Francia).' },
+    en: { email: 'E-mail', name: 'Full name', country: 'Country', choose: 'Choose…', company: 'I am buying for a company', companyName: 'Company name', taxId: 'Tax ID (optional)', pay: 'Pay {price}', paying: 'Processing…', loading: 'Loading secure payment…', stale: 'The displayed price is out of date (current price: {price}). Please reload the page.', notServed: 'This product is not sold to buyers in this country.', eu: 'This checkout serves buyers outside the European Union only.', loadFail: 'The payment form could not be loaded. Please reload the page.', done: 'Payment confirmed. We sent your order to {email}.', doneHelp: 'Order {order}. Please check your spam folder.', confirming: 'Confirming your payment…', later: 'If you close this page, your order will still be e-mailed within 10 minutes.', failed: 'The payment did not go through. Nothing was charged.', unreachable: 'The service cannot be reached right now.', secure: 'Payments are processed by Stripe for READ FRANCE SAS (France). No French VAT applies to buyers outside the EU.' },
+    fr: { email: 'E-mail', name: 'Nom complet', country: 'Pays', choose: 'Choisir…', company: 'J’achète pour une entreprise', companyName: 'Nom de l’entreprise', taxId: 'Numéro fiscal (facultatif)', pay: 'Payer {price}', paying: 'Paiement en cours…', loading: 'Chargement du paiement sécurisé…', stale: 'Le prix affiché n’est plus à jour (prix actuel : {price}). Rechargez la page.', notServed: 'Ce produit n’est pas vendu aux acheteurs de ce pays.', eu: 'Ce paiement est réservé aux acheteurs situés hors de l’Union européenne.', loadFail: 'Le module de paiement n’a pas pu être chargé. Rechargez la page.', done: 'Paiement confirmé. Votre commande a été envoyée à {email}.', doneHelp: 'Commande {order}. Pensez à vérifier vos courriers indésirables.', confirming: 'Confirmation du paiement…', later: 'Si vous fermez cette page, votre commande vous sera tout de même envoyée dans les 10 minutes.', failed: 'Le paiement n’a pas abouti. Aucun montant n’a été débité.', unreachable: 'Le service est momentanément injoignable.', secure: 'Paiement traité par Stripe pour READ FRANCE SAS (France). Pas de TVA française pour les acheteurs hors UE.' },
+    pt: { email: 'E-mail', name: 'Nome completo', country: 'País', choose: 'Escolha…', company: 'Estou comprando para uma empresa', companyName: 'Nome da empresa', taxId: 'Número fiscal (opcional)', pay: 'Pagar {price}', paying: 'Processando…', loading: 'Carregando o pagamento seguro…', stale: 'O preço exibido está desatualizado (preço atual: {price}). Recarregue a página.', notServed: 'Este produto não é vendido a compradores deste país.', eu: 'Este pagamento é reservado a compradores fora da União Europeia.', loadFail: 'Não foi possível carregar o formulário de pagamento. Recarregue a página.', done: 'Pagamento confirmado. Enviamos seu pedido para {email}.', doneHelp: 'Pedido {order}. Verifique também a caixa de spam.', confirming: 'Confirmando seu pagamento…', later: 'Se você fechar esta página, seu pedido será enviado por e-mail em até 10 minutos.', failed: 'O pagamento não foi concluído. Nada foi cobrado.', unreachable: 'O serviço está indisponível no momento.', secure: 'Pagamento processado pela Stripe para a READ FRANCE SAS (França).' },
+    es: { email: 'Correo electrónico', name: 'Nombre completo', country: 'País', choose: 'Elegir…', company: 'Compro para una empresa', companyName: 'Nombre de la empresa', taxId: 'Número fiscal (opcional)', pay: 'Pagar {price}', paying: 'Procesando…', loading: 'Cargando el pago seguro…', stale: 'El precio mostrado no está actualizado (precio actual: {price}). Recargue la página.', notServed: 'Este producto no se vende a compradores de este país.', eu: 'Este pago está reservado a compradores fuera de la Unión Europea.', loadFail: 'No se pudo cargar el formulario de pago. Recargue la página.', done: 'Pago confirmado. Enviamos su pedido a {email}.', doneHelp: 'Pedido {order}. Revise también la carpeta de spam.', confirming: 'Confirmando su pago…', later: 'Si cierra esta página, su pedido se le enviará por correo en un plazo de 10 minutos.', failed: 'El pago no se completó. No se ha cobrado nada.', unreachable: 'El servicio no está disponible en este momento.', secure: 'Pago procesado por Stripe para READ FRANCE SAS (Francia).' },
   };
   var CSS = '.ogc{font:inherit;max-width:520px}.ogc label{display:block;margin:.6em 0 .2em;font-weight:600}.ogc input[type=text],.ogc input[type=email],.ogc select{width:100%;box-sizing:border-box;padding:.55em .6em;border:1px solid #bbb;border-radius:6px;font:inherit;background:#fff;color:#111}.ogc .ogc-check{display:flex;gap:.5em;align-items:center;font-weight:400;margin:.8em 0}.ogc .ogc-pe{margin:1em 0}.ogc button{width:100%;padding:.8em;border:0;border-radius:6px;background:#1a56db;color:#fff;font:inherit;font-weight:700;cursor:pointer}.ogc button[disabled]{opacity:.55;cursor:not-allowed}.ogc .ogc-err{color:#b00020;margin:.6em 0}.ogc .ogc-ok{color:#0a7a2f;font-weight:700}.ogc .ogc-small{font-size:.85em;opacity:.8;margin:.6em 0}.ogc-spin{display:inline-block;width:1em;height:1em;margin-right:.5em;vertical-align:-.15em;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:ogc-spin .7s linear infinite}@keyframes ogc-spin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.ogc-spin{animation-duration:2s}}';
 
@@ -117,14 +120,17 @@
   }
 
   var BOT_UA = /bot\b|crawl|spider|slurp|headless|lighthouse|pagespeed|inspectiontool|googleother|mediapartners|bingpreview|phantom|puppeteer|playwright|selenium/i;
+  // Test campaign tags (utm_source=e2e-desktop-…, smoke, selftest, test-…): our runs, same rule as the backend (Track.js).
+  var TEST_TAG = /(^|[^a-z0-9])(e2e|selftest|smoke|octave-?test|qa-?test)([^a-z0-9]|$)|^test([^a-z0-9]|$)/i;
 
-  /** Why this hit is not a visit ('' if it is): our own tests (?octave_notrack=1, remembered in this browser; =0
-   *  clears it), automated browsers, crawlers. Same rules as veille-ao-afrique's mesure.js. The user agent is only
-   *  read here, never sent. */
+  /** Why this hit is not a visit ('' if it is): our own tests (?octave_notrack=1 or a test utm tag, remembered in
+   *  this browser; octave_notrack=0 clears it), automated browsers, crawlers. Same rules as veille-ao-afrique's
+   *  mesure.js. The user agent is only read here, never sent. */
   function exclusion(q) {
     var n = global.navigator || {}, x = '', s;
-    try { s = global.localStorage; if (q.has('octave_notrack')) { if (q.get('octave_notrack') === '1') s.setItem('octave_notrack', '1'); else s.removeItem('octave_notrack'); } x = s.getItem('octave_notrack') === '1' ? 'notrack' : ''; } catch (e) { /* storage blocked */ }
-    if (!x && q.get('octave_notrack') === '1') x = 'notrack';
+    var tagged = q.get('octave_notrack') !== '0' && ['utm_source', 'utm_medium', 'utm_campaign'].some(function (k) { return TEST_TAG.test(q.get(k) || ''); });
+    try { s = global.localStorage; if (q.has('octave_notrack') || tagged) { if (q.get('octave_notrack') === '1' || tagged) s.setItem('octave_notrack', '1'); else s.removeItem('octave_notrack'); } x = s.getItem('octave_notrack') === '1' ? 'notrack' : ''; } catch (e) { /* storage blocked */ }
+    if (!x && (q.get('octave_notrack') === '1' || tagged)) x = 'notrack';
     if (!x && n.webdriver) x = 'webdriver';
     if (!x && BOT_UA.test(n.userAgent || '')) x = 'bot';
     return x;
@@ -195,10 +201,31 @@
     var displayNames = null;
     try { displayNames = new Intl.DisplayNames([lang], { type: 'region' }); } catch (e) { displayNames = null; }
     var countrySelect = el('select', { name: 'country', id: 'ogc-country', required: true, autocomplete: 'country' }, [el('option', { value: '', text: L.choose })]);
-    COUNTRIES.map(function (c) { return { c: c, n: displayNames ? displayNames.of(c) : c }; })
-      .sort(function (a, b) { return a.n.localeCompare(b.n, lang); })
-      .forEach(function (x) { countrySelect.appendChild(el('option', { value: x.c, text: x.n })); });
-    if (o.country && COUNTRIES.indexOf(o.country) >= 0) countrySelect.value = o.country;
+    // Optional allowlist (module 1.4.0): `countries: ['US']` on the page, or the product's own list from the catalog.
+    var served = null;
+    function fillCountries(list) {
+      var keep = countrySelect.value;
+      while (countrySelect.options.length > 1) countrySelect.remove(1);
+      list.map(function (c) { return { c: c, n: displayNames ? displayNames.of(c) : c }; })
+        .sort(function (a, b) { return a.n.localeCompare(b.n, lang); })
+        .forEach(function (x) { countrySelect.appendChild(el('option', { value: x.c, text: x.n })); });
+      if (keep && list.indexOf(keep) >= 0) countrySelect.value = keep;
+      else if (o.country && list.indexOf(o.country) >= 0) countrySelect.value = o.country;
+      else if (list.length === 1) countrySelect.value = list[0];
+    }
+    function restrict(list) {
+      if (!Array.isArray(list)) return;
+      var ok = list.filter(function (c) { return COUNTRIES.indexOf(c) >= 0 && EU.indexOf(c) < 0; });
+      if (!ok.length) return;
+      served = ok;
+      fillCountries(ok);
+    }
+    fillCountries(COUNTRIES);
+    restrict(o.countries);
+    function countryError() {
+      var v = countrySelect.value;
+      return EU.indexOf(v) >= 0 ? L.eu : (served && v && served.indexOf(v) < 0 ? L.notServed : '');
+    }
     var companyBox = el('div', { hidden: true }, [
       el('label', { for: 'ogc-company', text: L.companyName }), el('input', { type: 'text', name: 'company', id: 'ogc-company', maxlength: '200', autocomplete: 'organization' }),
       el('label', { for: 'ogc-taxid', text: L.taxId }), el('input', { type: 'text', name: 'taxId', id: 'ogc-taxid', maxlength: '40', pattern: '[A-Za-z0-9 .\\/\\-]{2,40}' }),
@@ -225,7 +252,7 @@
       form.elements.company.required = companyToggle.checked;
     });
     countrySelect.addEventListener('change', function () {
-      countrySelect.setCustomValidity(EU.indexOf(countrySelect.value) >= 0 ? L.eu : '');
+      countrySelect.setCustomValidity(countryError());
     });
 
     var ready = false, busy = false, blocked = null, pending = null, stripe = null, elements = null;
@@ -316,6 +343,7 @@
       .then(function (c) {
         if (!c.ok) block(c.message || L.loadFail);
         else if (c.amount !== o.amount || c.currency !== o.currency) block(fill(L.stale, { price: formatPrice(c.amount, c.currency, lang) }));
+        else if (c.countries && !served) restrict(c.countries);
       })
       .catch(function () { /* createIntent re-checks everything */ });
 
@@ -324,7 +352,7 @@
       if (busy || !elements) return;
       if (blocked) { errBox.textContent = blocked; errBox.hidden = false; return; }
       errBox.hidden = true;
-      countrySelect.setCustomValidity(EU.indexOf(countrySelect.value) >= 0 ? L.eu : '');
+      countrySelect.setCustomValidity(countryError());
       if (!form.reportValidity()) return;
       track(o, 'checkout_start');
       if (o.track !== false) croGoal('checkout');
@@ -347,6 +375,10 @@
       };
       if (pmOpts.configuration) body.paymentMethodConfiguration = pmOpts.configuration;
       if (o.smokeToken) body.smokeToken = o.smokeToken;
+      // Our tests (octave_notrack, automated browser): the backend marks the PaymentIntent metadata.test and keeps it
+      // out of the funnel and `paid` counters (1.5.0). Never a reason to refuse a sale.
+      var tx = exclusion(new URLSearchParams(global.location.search));
+      if (tx === 'notrack' || tx === 'webdriver') body.test = tx;
       var xp = o.track === false ? '' : xpOf();
       if (xp) body.xp = xp;
       var key = JSON.stringify(body);
@@ -400,6 +432,6 @@
     },
     /** Internal (unit tests): cancelIntent(endpoint, { pi, clientSecret }, lang) with one retry. */
     _cancelIntent: cancelIntent,
-    version: '1.3.0',
+    version: '1.5.0',
   };
 })(window);
